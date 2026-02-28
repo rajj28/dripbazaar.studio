@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabaseClient';
-import { MapPin, Plus, Edit2, Trash2, Check } from 'lucide-react';
+import { MapPin, Plus, Edit2, Trash2, Check, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '../hooks/useToast';
+import { ToastContainer } from '../components/Toast';
 import './Profile.css';
 
 interface Address {
@@ -18,6 +21,8 @@ interface Address {
 
 export default function Profile() {
   const { user, profile } = useAuth();
+  const navigate = useNavigate();
+  const toast = useToast();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
@@ -106,10 +111,10 @@ export default function Profile() {
 
       setAddresses(updatedAddresses);
       resetForm();
-      alert(editingAddress ? 'Address updated successfully!' : 'Address added successfully!');
+      toast.success(editingAddress ? 'Address updated successfully!' : 'Address added successfully!');
     } catch (error) {
       console.error('Error saving address:', error);
-      alert('Failed to save address. Please try again.');
+      toast.error('Failed to save address. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -123,7 +128,7 @@ export default function Profile() {
 
   const handleDelete = async (addressId: string) => {
     if (!user) return;
-    if (!confirm('Are you sure you want to delete this address?')) return;
+    if (!window.confirm('Are you sure you want to delete this address?')) return;
 
     setLoading(true);
 
@@ -138,10 +143,10 @@ export default function Profile() {
       if (error) throw error;
 
       setAddresses(updatedAddresses);
-      alert('Address deleted successfully!');
+      toast.success('Address deleted successfully!');
     } catch (error) {
       console.error('Error deleting address:', error);
-      alert('Failed to delete address. Please try again.');
+      toast.error('Failed to delete address. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -166,10 +171,10 @@ export default function Profile() {
       if (error) throw error;
 
       setAddresses(updatedAddresses);
-      alert('Default address updated!');
+      toast.success('Default address updated!');
     } catch (error) {
       console.error('Error setting default address:', error);
-      alert('Failed to set default address. Please try again.');
+      toast.error('Failed to set default address. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -202,8 +207,15 @@ export default function Profile() {
 
   return (
     <div className="profile-page">
+      <ToastContainer toasts={toast.toasts} onClose={toast.removeToast} />
       <div className="profile-container">
-        <h1 className="profile-title">My Profile</h1>
+        <div className="profile-header">
+          <button className="btn-back" onClick={() => navigate('/')}>
+            <ArrowLeft size={20} />
+            Back to Home
+          </button>
+          <h1 className="profile-title">My Profile</h1>
+        </div>
 
         {/* User Info Section */}
         <div className="profile-section">

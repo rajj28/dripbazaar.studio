@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import EmptyState from '../components/EmptyState';
 import './Cart.css';
 
 export default function Cart() {
@@ -9,15 +10,13 @@ export default function Cart() {
   if (cartCount === 0) {
     return (
       <div className="cart-empty">
-        <div className="cart-empty-content">
-          <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M9 2L7.17 4H3a1 1 0 00-1 1v14a1 1 0 001 1h18a1 1 0 001-1V5a1 1 0 00-1-1h-4.17L15 2H9z"/>
-            <circle cx="12" cy="13" r="4"/>
-          </svg>
-          <h2>Your cart is empty</h2>
-          <p>Add some products to get started</p>
-          <button onClick={() => navigate('/')}>Continue Shopping</button>
-        </div>
+        <EmptyState
+          type="cart"
+          title="Your Cart is Empty"
+          message="Add some products to get started with your shopping."
+          actionLabel="Continue Shopping"
+          onAction={() => navigate('/')}
+        />
       </div>
     );
   }

@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
+import { useToast } from '../hooks/useToast';
+import { ToastContainer } from '../components/Toast';
 import './Payment.css';
 
 declare global {
@@ -17,6 +19,7 @@ export default function Payment() {
   const { cart, clearCart } = useCart();
   const { user } = useAuth();
   const { address, total } = location.state || {};
+  const toast = useToast();
 
   const [loading, setLoading] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState<'razorpay' | null>(null);
@@ -62,7 +65,7 @@ export default function Payment() {
 
   const handlePayment = async () => {
     if (!selectedMethod) {
-      alert('Please select a payment method');
+      toast.warning('Please select a payment method');
       return;
     }
 
@@ -73,6 +76,8 @@ export default function Payment() {
       if (!order) {
         throw new Error('Failed to create order');
       }
+
+      toast.info('Opening payment gateway...');
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
@@ -92,27 +97,32 @@ export default function Payment() {
                 amount: total,
                 payment_method: 'razorpay',
                 transaction_id: response.razorpay_payment_id,
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_signature: response.razorpay_signature,
-                status: 'pending'
+                payment_screenshot_url: null,
+                status: 'verified'
               })
               .select()
               .single();
 
-            if (paymentError) throw paymentError;
+            if (paymentError) {
+              console.error('Payment record error:', paymentError);
+            }
 
-            // Update order status to payment_submitted
+            // Update order with Razorpay IDs and status
             await supabase
               .from('orders')
               .update({
-                status: 'payment_submitted'
+                status: 'payment_verified',
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id
               })
               .eq('id', order.id);
 
             clearCart();
+            toast.success('Payment successful!');
             navigate('/order-success', { state: { orderId: order.id } });
           } catch (error) {
             console.error('Error updating order:', error);
+            toast.error('Payment successful but order update failed. Please contact support with order ID: ' + order.id);
           }
         },
         prefill: {
@@ -125,6 +135,7 @@ export default function Payment() {
         modal: {
           ondismiss: function() {
             setLoading(false);
+            toast.info('Payment cancelled');
           }
         }
       };
@@ -133,7 +144,7 @@ export default function Payment() {
       razorpay.open();
     } catch (error) {
       console.error('Payment error:', error);
-      alert('Payment failed. Please try again.');
+      toast.error('Payment failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -145,6 +156,7 @@ export default function Payment() {
 
   return (
     <div className="payment-page">
+      <ToastContainer toasts={toast.toasts} onClose={toast.removeToast} />
       <div className="payment-container">
         <h1>Payment Method</h1>
 

@@ -9,11 +9,37 @@
   margin: 0 auto;
 }
 
+.orders-header {
+  margin-bottom: 40px;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #FFFFFF;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 20px;
+}
+
+.btn-back:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateX(-5px);
+}
+
 .orders-title {
   font-size: 3rem;
   font-weight: 700;
   color: #FFFFFF;
-  margin-bottom: 40px;
+  margin: 0;
   text-align: center;
   letter-spacing: 0.05em;
   display: flex;
@@ -346,6 +372,11 @@
 @media (max-width: 768px) {
   .orders-page {
     padding: 80px 15px 40px;
+  }
+
+  .btn-back {
+    font-size: 0.8rem;
+    padding: 8px 16px;
   }
 
   .orders-title {

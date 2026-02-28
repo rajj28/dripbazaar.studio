@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useToast } from '../hooks/useToast';
+import { ToastContainer } from '../components/Toast';
 import type { Address } from '../types';
 import './Checkout.css';
 
 export default function Checkout() {
   const navigate = useNavigate();
   const { cart, cartTotal, cartCount } = useCart();
+  const toast = useToast();
   
   const [step, setStep] = useState<'address' | 'payment'>('address');
   const [address, setAddress] = useState<Address>({
@@ -43,6 +46,9 @@ export default function Checkout() {
     e.preventDefault();
     if (validateAddress()) {
       setStep('payment');
+      toast.success('Address confirmed! Proceed to payment.');
+    } else {
+      toast.error('Please fill in all required fields correctly.');
     }
   };
 
@@ -67,6 +73,7 @@ export default function Checkout() {
 
   return (
     <div className="checkout-page">
+      <ToastContainer toasts={toast.toasts} onClose={toast.removeToast} />
       <div className="checkout-header">
         <h1>Checkout</h1>
         <div className="checkout-steps">

@@ -24,27 +24,64 @@ interface OrderWithPayment extends Order {
 }
 
 export default function AdminDashboard() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const navigate = useNavigate();
   const [orders, setOrders] = useState<OrderWithPayment[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'pending' | 'verified'>('pending');
   const [selectedOrder, setSelectedOrder] = useState<OrderWithPayment | null>(null);
   const [verifying, setVerifying] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [checkingAdmin, setCheckingAdmin] = useState(true);
 
   useEffect(() => {
-    // Check if user is admin (you can add admin role check here)
-    if (!user) {
-      navigate('/auth', { state: { from: { pathname: '/admin' } } });
-      return;
+    // Check if user is admin
+    const checkAdminStatus = async () => {
+      if (!user) {
+        navigate('/auth', { state: { from: { pathname: '/admin' } } });
+        return;
+      }
+
+      // Check if user has admin role in profile
+      if (profile?.role === 'admin') {
+        setIsAdmin(true);
+        setCheckingAdmin(false);
+        return;
+      }
+
+      // If no role in profile, check email (you can add your admin emails here)
+      const adminEmails = [
+        'admin@dripbazaar.studio',
+        'your-email@example.com', // Add your admin email here
+      ];
+
+      if (adminEmails.includes(user.email || '')) {
+        setIsAdmin(true);
+        setCheckingAdmin(false);
+        return;
+      }
+
+      // Not an admin
+      setIsAdmin(false);
+      setCheckingAdmin(false);
+      alert('Access denied. Admin privileges required.');
+      navigate('/');
+    };
+
+    checkAdminStatus();
+  }, [user, profile, navigate]);
+
+  useEffect(() => {
+    if (isAdmin) {
+      fetchOrders();
     }
-    
-    fetchOrders();
-  }, [user, filter]);
+  }, [isAdmin, filter]);
 
   const fetchOrders = async () => {
     try {
       setLoading(true);
+      console.log('Fetching orders with filter:', filter);
+      
       let query = supabase
         .from('orders')
         .select(`
@@ -54,9 +91,13 @@ export default function AdminDashboard() {
         .order('created_at', { ascending: false });
 
       if (filter === 'pending') {
-        query = query.eq('status', 'payment_submitted');
+        console.log('Filtering for pending orders (statuses: pending, payment_submitted, payment_verified)');
+        query = query.in('status', ['pending', 'payment_submitted', 'payment_verified']);
       } else if (filter === 'verified') {
-        query = query.in('status', ['payment_verified', 'confirmed']);
+        console.log('Filtering for verified orders (statuses: confirmed, shipped, delivered)');
+        query = query.in('status', ['confirmed', 'shipped', 'delivered']);
+      } else {
+        console.log('Fetching all orders');
       }
 
       const { data, error } = await query;
@@ -69,6 +110,19 @@ export default function AdminDashboard() {
       
       console.log('Fetched orders:', data);
       console.log('Number of orders:', data?.length || 0);
+      if (data && data.length > 0) {
+        console.log('Order statuses:', data.map(o => ({ id: o.id.slice(0, 8), status: o.status })));
+        console.log('First order details:', {
+          id: data[0].id.slice(0, 8),
+          status: data[0].status,
+          payment_method: data[0].payment_method,
+          total_amount: data[0].total_amount
+        });
+        
+        // Alert to help debug
+        const statusList = data.map(o => `${o.id.slice(0, 8)}: ${o.status}`).join(', ');
+        console.log('📋 ORDER STATUS SUMMARY:', statusList);
+      }
       setOrders(data as OrderWithPayment[]);
     } catch (error) {
       console.error('Error fetching orders:', error);
@@ -79,57 +133,82 @@ export default function AdminDashboard() {
   };
 
   const verifyPayment = async (order: OrderWithPayment) => {
-    if (!order.payments?.[0]) {
-      alert('No payment found for this order');
-      return;
-    }
-
     setVerifying(true);
     try {
-      const payment = order.payments[0];
+      console.log('🔄 Confirming order:', order.id.slice(0, 8));
+      
+      // Update payment status if payment exists
+      if (order.payments?.[0]) {
+        const payment = order.payments[0];
+        
+        const { error: paymentError } = await supabase
+          .from('payments')
+          .update({
+            status: 'verified',
+            verified_at: new Date().toISOString(),
+            verified_by: user?.id,
+          })
+          .eq('id', payment.id);
 
-      // Update payment status
-      const { error: paymentError } = await supabase
-        .from('payments')
-        .update({
-          status: 'verified',
-          verified_at: new Date().toISOString(),
-          verified_by: user?.id,
-        })
-        .eq('id', payment.id);
+        if (paymentError) {
+          console.error('Payment update error:', paymentError);
+          throw paymentError;
+        }
+        console.log('✅ Payment status updated');
+      }
 
-      if (paymentError) throw paymentError;
-
-      // Update order status to confirmed (payment verified and order confirmed)
+      // Update order status to confirmed
       const { error: orderError } = await supabase
         .from('orders')
         .update({ status: 'confirmed' })
         .eq('id', order.id);
 
-      if (orderError) throw orderError;
+      if (orderError) {
+        console.error('Order update error:', orderError);
+        throw orderError;
+      }
+      console.log('✅ Order status updated to confirmed');
+      
+      // Verify the update worked
+      const { data: verifyData } = await supabase
+        .from('orders')
+        .select('id, status')
+        .eq('id', order.id)
+        .single();
+      console.log('🔍 Verification - Order status in DB:', verifyData?.status);
 
-      // Send verification email
+      // Send confirmation email
       const userEmail = order.address?.email || order.address?.full_name;
       if (userEmail) {
-        await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-email`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({
-            type: 'payment_verified',
-            orderId: order.id,
-            userEmail: userEmail,
-          }),
-        });
+        try {
+          await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-email`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            },
+            body: JSON.stringify({
+              type: 'payment_verified',
+              orderId: order.id,
+              userEmail: userEmail,
+            }),
+          });
+          console.log('✅ Email sent');
+        } catch (emailError) {
+          console.warn('Email send failed (non-critical):', emailError);
+        }
       }
 
-      alert('Payment verified successfully! Email sent to customer.');
+      alert('Order confirmed successfully!');
       setSelectedOrder(null);
-      fetchOrders();
+      
+      // Force refresh the orders list
+      console.log('🔄 Refreshing orders list...');
+      await fetchOrders();
+      console.log('✅ Orders list refreshed');
     } catch (error) {
-      const errorMessage = handleError(error, 'Payment verification');
+      const errorMessage = handleError(error, 'Order confirmation');
+      console.error('❌ Order confirmation failed:', error);
       alert(errorMessage);
     } finally {
       setVerifying(false);
@@ -196,6 +275,28 @@ export default function AdminDashboard() {
     );
   };
 
+  // Show loading while checking admin status
+  if (checkingAdmin) {
+    return (
+      <div className="admin-dashboard">
+        <div className="admin-loading">Checking admin access...</div>
+      </div>
+    );
+  }
+
+  // Show access denied if not admin
+  if (!isAdmin) {
+    return (
+      <div className="admin-dashboard">
+        <div className="admin-empty">
+          <h2>Access Denied</h2>
+          <p>You do not have permission to access the admin dashboard.</p>
+          <button onClick={() => navigate('/')}>Go to Home</button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="admin-dashboard">
       <div className="admin-header">
@@ -247,7 +348,12 @@ export default function AdminDashboard() {
         <div className="admin-empty">No orders found</div>
       ) : (
         <div className="orders-grid">
-          {orders.map((order) => (
+          {orders.map((order) => {
+            // Debug: Log order status
+            const shouldShowButton = !['confirmed', 'shipped', 'delivered', 'cancelled'].includes(order.status);
+            console.log(`Order ${order.id.slice(0, 8)} - Status: "${order.status}" - Show button: ${shouldShowButton}`);
+            
+            return (
             <div key={order.id} className="order-card">
               <div className="order-card-header">
                 <div>
@@ -305,18 +411,33 @@ export default function AdminDashboard() {
                 >
                   View Details
                 </button>
-                {order.status === 'payment_submitted' && order.payments?.[0]?.status === 'pending' && (
+                {/* Show confirm button for orders that need confirmation */}
+                {!['confirmed', 'shipped', 'delivered', 'cancelled'].includes(order.status) && (
                   <button
                     className="order-btn order-btn-verify"
                     onClick={() => verifyPayment(order)}
                     disabled={verifying}
+                    style={{ 
+                      display: 'block',
+                      width: '100%',
+                      marginTop: '8px',
+                      backgroundColor: '#10b981',
+                      color: 'white',
+                      padding: '12px',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: '500'
+                    }}
                   >
-                    {verifying ? 'Verifying...' : 'Verify Payment'}
+                    {verifying ? 'Confirming...' : '✓ Confirm Order'}
                   </button>
                 )}
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
@@ -409,14 +530,15 @@ export default function AdminDashboard() {
             </div>
 
             <div className="modal-footer">
-              {selectedOrder.status === 'payment_submitted' && selectedOrder.payments?.[0]?.status === 'pending' && (
+              {/* Show confirm button for orders that need confirmation */}
+              {!['confirmed', 'shipped', 'delivered', 'cancelled'].includes(selectedOrder.status) && (
                 <>
                   <button
                     className="modal-btn modal-btn-verify"
                     onClick={() => verifyPayment(selectedOrder)}
                     disabled={verifying}
                   >
-                    {verifying ? 'Verifying...' : '✓ Verify Payment'}
+                    {verifying ? 'Confirming...' : '✓ Confirm Order'}
                   </button>
                   <button
                     className="modal-btn modal-btn-reject"
@@ -425,13 +547,13 @@ export default function AdminDashboard() {
                       if (reason) rejectPayment(selectedOrder, reason);
                     }}
                   >
-                    ✕ Reject Payment
+                    ✕ Reject Order
                   </button>
                 </>
               )}
-              {selectedOrder.payments?.[0]?.status === 'verified' && (
+              {selectedOrder.status === 'confirmed' && (
                 <div className="modal-verified-badge">
-                  ✓ Payment Verified
+                  ✓ Order Confirmed
                 </div>
               )}
             </div>

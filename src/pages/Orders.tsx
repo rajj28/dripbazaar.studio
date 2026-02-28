@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabaseClient';
-import { Package, Clock, CheckCircle, XCircle, Eye } from 'lucide-react';
+import { Package, Clock, CheckCircle, XCircle, Eye, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import type { Order } from '../lib/supabaseClient';
+import { SkeletonOrderList } from '../components/SkeletonLoader';
+import EmptyState from '../components/EmptyState';
 import './Orders.css';
 
 export default function Orders() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -22,16 +26,25 @@ export default function Orders() {
 
     setLoading(true);
     try {
+      console.log('Loading orders for user:', user.id);
+      
       const { data, error } = await supabase
         .from('orders')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error loading orders:', error);
+        throw error;
+      }
+      
+      console.log('Orders loaded:', data);
+      console.log('Number of orders:', data?.length || 0);
       setOrders(data || []);
     } catch (error) {
       console.error('Error loading orders:', error);
+      alert('Failed to load orders. Please check console for details.');
     } finally {
       setLoading(false);
     }
@@ -87,7 +100,13 @@ export default function Orders() {
     return (
       <div className="orders-page">
         <div className="orders-container">
-          <p className="orders-login-message">Please log in to view your orders.</p>
+          <EmptyState
+            type="orders"
+            title="Please Log In"
+            message="You need to be logged in to view your orders."
+            actionLabel="Sign In"
+            onAction={() => navigate('/auth')}
+          />
         </div>
       </div>
     );
@@ -97,7 +116,17 @@ export default function Orders() {
     return (
       <div className="orders-page">
         <div className="orders-container">
-          <div className="orders-loading">Loading your orders...</div>
+          <div className="orders-header">
+            <button className="btn-back" onClick={() => navigate('/')}>
+              <ArrowLeft size={20} />
+              Back to Home
+            </button>
+            <h1 className="orders-title">
+              <Package size={36} />
+              My Orders
+            </h1>
+          </div>
+          <SkeletonOrderList count={3} />
         </div>
       </div>
     );
@@ -106,17 +135,25 @@ export default function Orders() {
   return (
     <div className="orders-page">
       <div className="orders-container">
-        <h1 className="orders-title">
-          <Package size={36} />
-          My Orders
-        </h1>
+        <div className="orders-header">
+          <button className="btn-back" onClick={() => navigate('/')}>
+            <ArrowLeft size={20} />
+            Back to Home
+          </button>
+          <h1 className="orders-title">
+            <Package size={36} />
+            My Orders
+          </h1>
+        </div>
 
         {orders.length === 0 ? (
-          <div className="orders-empty">
-            <Package size={64} />
-            <p>You haven't placed any orders yet.</p>
-            <a href="/" className="btn-shop-now">Start Shopping</a>
-          </div>
+          <EmptyState
+            type="orders"
+            title="No Orders Yet"
+            message="You haven't placed any orders yet. Start shopping to see your orders here."
+            actionLabel="Start Shopping"
+            onAction={() => navigate('/')}
+          />
         ) : (
           <div className="orders-list">
             {orders.map((order) => (
@@ -140,7 +177,7 @@ export default function Orders() {
                     </div>
                     <div className="order-info-item">
                       <span className="info-label">Total:</span>
-                      <span className="info-value amount">₹{order.total_amount.toFixed(2)}</span>
+                      <span className="info-value amount">₹{(order.price || order.total_amount || 0).toFixed(2)}</span>
                     </div>
                   </div>
 
@@ -199,7 +236,7 @@ export default function Orders() {
                   <p><strong>Order ID:</strong> {selectedOrder.id}</p>
                   <p><strong>Date:</strong> {formatDate(selectedOrder.created_at)}</p>
                   <p><strong>Status:</strong> {getStatusText(selectedOrder.status)}</p>
-                  <p><strong>Total Amount:</strong> ₹{selectedOrder.total_amount.toFixed(2)}</p>
+                  <p><strong>Total Amount:</strong> ₹{(selectedOrder.price || selectedOrder.total_amount || 0).toFixed(2)}</p>
                 </div>
 
                 <div className="modal-section">
