@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../hooks/useToast';
@@ -23,6 +23,11 @@ export default function Checkout() {
   });
 
   const [errors, setErrors] = useState<Partial<Address>>({});
+
+  // Scroll to top on page load
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const validateAddress = () => {
     const newErrors: Partial<Address> = {};

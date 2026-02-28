@@ -37,6 +37,11 @@ html, body {
     overscroll-behavior-y: none; /* Prevent bounce effect */
   }
   
+  /* Optimize scroll performance with consistent momentum */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+  
   /* Reduce scroll distance - make sections shorter */
   .hero-section {
     height: auto !important;
@@ -46,10 +51,12 @@ html, body {
   .collection-wrapper {
     height: auto !important;
     min-height: 80vh !important; /* Reduced scroll distance */
+    scroll-snap-type: y proximity; /* Add snap points for better control */
   }
   
   .featured-section {
     padding: 40px 20px !important; /* Reduced padding */
+    scroll-snap-align: start; /* Snap to section start */
   }
 }
 

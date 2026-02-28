@@ -36,6 +36,11 @@ export default function PreBook() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Scroll to top on page load
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Redirect to auth if not logged in
   useEffect(() => {
     if (!authLoading && !user) {

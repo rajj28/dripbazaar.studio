@@ -24,6 +24,11 @@ export default function Payment() {
   const [loading, setLoading] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState<'razorpay' | null>(null);
 
+  // Scroll to top on page load
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   useEffect(() => {
     if (!address || !total) {
       navigate('/checkout');

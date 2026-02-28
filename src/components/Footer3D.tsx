@@ -14,6 +14,14 @@ export default function Footer3D() {
     useEffect(() => {
         if (!canvasRef.current) return;
 
+        // Disable 3D model on mobile devices
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+            console.log('3D model disabled on mobile for performance');
+            setIsLoaded(true); // Set loaded to hide loader
+            return;
+        }
+
         // Scene setup with white background
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0xffffff); // White background
