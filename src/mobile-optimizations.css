@@ -10,11 +10,10 @@
 /* Prevent horizontal scroll and improve touch */
 html, body {
   overflow-x: hidden;
-  overflow-y: auto;
   width: 100%;
   position: relative;
   -webkit-overflow-scrolling: touch;
-  touch-action: auto;
+  touch-action: pan-y;
   text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
 }
@@ -23,13 +22,6 @@ html, body {
 * {
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
-}
-
-/* Allow vertical scrolling on mobile */
-@media (max-width: 768px) {
-  * {
-    touch-action: pan-y pan-x !important;
-  }
 }
 
 /* Smooth scrolling with better mobile support */
@@ -911,17 +903,5 @@ textarea:focus-visible {
   .premium-grid,
   .featured-grid {
     grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-
-/* ========================================
-   ADMIN DASHBOARD MOBILE FIX
-   ======================================== */
-
-@media (max-width: 768px) {
-  /* Ensure admin dashboard can scroll */
-  .admin-dashboard {
-    touch-action: pan-y !important;
   }
 }
