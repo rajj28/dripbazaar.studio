@@ -1,11 +1,11 @@
 .admin-dashboard {
   min-height: 100vh;
+  height: auto;
   background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
   padding: 2rem;
   color: white;
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
+  position: relative;
+  width: 100%;
 }
 
 .admin-header {
@@ -419,18 +419,28 @@
 }
 
 @media (max-width: 768px) {
+  /* Force body to allow scrolling on admin page */
+  body {
+    overflow-y: auto !important;
+    height: auto !important;
+    position: relative !important;
+  }
+
   .admin-dashboard {
     padding: 1rem;
     padding-top: 80px; /* Space for profile icon */
     padding-bottom: 2rem;
     height: auto;
     min-height: 100vh;
+    position: relative;
+    overflow: visible;
   }
 
   .admin-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
+    position: relative;
   }
 
   .admin-title {
@@ -456,10 +466,12 @@
   .orders-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
+    position: relative;
   }
 
   .order-card {
     padding: 1rem;
+    position: relative;
   }
 
   .order-card-footer {
@@ -474,11 +486,14 @@
     padding: 1rem;
     align-items: flex-start;
     padding-top: 2rem;
+    position: fixed;
+    overflow-y: auto;
   }
 
   .modal-content {
     max-height: calc(100vh - 4rem);
     margin: 0;
+    position: relative;
   }
 
   .modal-header,

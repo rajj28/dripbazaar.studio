@@ -905,3 +905,24 @@ textarea:focus-visible {
     grid-template-columns: repeat(4, 1fr);
   }
 }
+
+
+/* ========================================
+   ADMIN DASHBOARD MOBILE FIX
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* Fix scrolling on admin dashboard */
+  body:has(.admin-dashboard) {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    position: relative !important;
+  }
+  
+  html:has(.admin-dashboard) {
+    overflow-y: auto !important;
+    height: auto !important;
+  }
+}
