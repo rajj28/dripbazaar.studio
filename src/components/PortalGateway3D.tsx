@@ -6,7 +6,7 @@ import { useScroll, useTransform, MotionValue } from 'framer-motion';
 import * as THREE from 'three';
 import './PortalGateway3D.css';
 
-function ArchModel({ scrollProgress }: { scrollProgress: MotionValue<number> }) {
+function ArchModel({ scrollProgress: _scrollProgress }: { scrollProgress: MotionValue<number> }) {
     const { scene } = useGLTF('/models/ancient_arch/scene.gltf');
     const meshRef = useRef<THREE.Group>(null);
 

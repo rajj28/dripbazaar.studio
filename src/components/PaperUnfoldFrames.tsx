@@ -65,7 +65,7 @@ function drawPaperSegment(
 ) {
     ctx.save();
 
-    const foldProgress = foldAngle / 180;
+    // const foldProgress = foldAngle / 180;
 
     // Create gradient for lighting based on fold angle
     const lightGradient = ctx.createLinearGradient(

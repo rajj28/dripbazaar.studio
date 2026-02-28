@@ -49,4 +49,43 @@ export default function Navbar() {
             ))}
           </div>
 
-     
+          {/* Action Icons */}
+          <div className="navbar-actions">
+            <button className="navbar-icon" aria-label="Search">
+              <Search size={20} />
+            </button>
+            <button className="navbar-icon" aria-label="Account">
+              <User size={20} />
+            </button>
+            <button className="navbar-icon" aria-label="Shopping Bag">
+              <ShoppingBag size={20} />
+            </button>
+            <button 
+              className="navbar-mobile-toggle"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Toggle Menu"
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile Menu */}
+      <div className={`mobile-menu ${isMobileMenuOpen ? 'active' : ''}`}>
+        <div className="mobile-menu-content">
+          {navLinks.map((link) => (
+            <a 
+              key={link.name} 
+              href={link.href} 
+              className="mobile-menu-link"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              {link.name}
+            </a>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}

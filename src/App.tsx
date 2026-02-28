@@ -16,7 +16,7 @@ function App() {
 
       {/* Hero section — extended for scroll effect */}
       <section className="hero-section">
-        <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 1 }}>
+        <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'flex', flexDirection: 'column', zIndex: 1 }}>
           <HeroHeadline />
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', paddingLeft: '15%', paddingTop: '8vh' }}>
             <div>

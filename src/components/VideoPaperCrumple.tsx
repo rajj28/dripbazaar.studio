@@ -111,7 +111,7 @@ export default function VideoPaperCrumple() {
             const container = containerRef.current;
             if (!container) return;
 
-            const rect = container.getBoundingClientRect();
+            // const rect = container.getBoundingClientRect();
             canvas.style.width = '100%';
             canvas.style.height = '100%';
         };
