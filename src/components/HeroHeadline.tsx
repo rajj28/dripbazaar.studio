@@ -21,6 +21,9 @@ export default function HeroHeadline() {
             src="/drip bazaar all assests/new logo.png" 
             alt="Drip Bazaar Logo" 
             className="headline-logo"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
           />
           <h1 className="headline-text">
             DRIP BAZAAR

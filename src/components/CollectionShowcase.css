@@ -339,6 +339,11 @@
 
 /* Mobile Responsive Styles */
 @media (max-width: 968px) {
+    .collection-wrapper {
+        height: 800vh !important; /* Increased for better mobile scroll */
+        background: #000; /* Fill gaps with black */
+    }
+    
     .stage-ghost-text {
         font-size: clamp(4rem, 12vw, 12rem);
     }
@@ -364,107 +369,261 @@
         width: 100%;
         justify-content: center;
     }
+    
+    /* Increase sentinel height for better scroll control */
+    .chapter-sentinel {
+        height: 150vh !important;
+    }
 }
 
 @media (max-width: 768px) {
+    .collection-wrapper {
+        height: 600vh !important; /* Reduced from 900vh for more compact mobile */
+        background: #000; /* Fill gaps with black */
+    }
+    
     .collection-stage {
         min-height: 100vh;
+        position: sticky !important;
+        top: 0 !important;
+        background: transparent; /* Let wrapper background show */
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 60px 15px 10px; /* Increased top padding to prevent cropping */
     }
 
     .stage-drop-badge {
-        font-size: 0.7rem;
-        padding: 0.4rem 0.8rem;
-        top: 15px;
-        left: 15px;
+        font-size: 0.65rem;
+        padding: 0.3rem 0.7rem;
+        top: 18px; /* Moved down to prevent cropping */
+        left: 50px; /* Moved more to the right */
+        z-index: 20;
     }
 
     .stage-counter {
-        font-size: 0.9rem;
-        top: 15px;
-        right: 15px;
+        font-size: 0.85rem;
+        top: 18px; /* Moved down to prevent cropping */
+        right: 50px; /* Moved more to the left */
+        z-index: 20;
     }
 
     .stage-ghost-text {
-        font-size: clamp(3rem, 10vw, 10rem);
+        font-size: clamp(2.5rem, 8vw, 8rem);
+        opacity: 0.03;
+    }
+    
+    .stage-center {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 10vh; /* Reduced from 15vh since we added top padding */
+        padding: 10px 0;
     }
 
     .stage-card {
-        max-width: 240px;
-        max-height: 340px;
+        width: 55vw !important;
+        max-width: 200px !important;
+        height: auto !important;
+        aspect-ratio: 2/3 !important;
     }
-
-    .stage-subtitle {
-        font-size: 1rem;
-    }
-
-    .stage-philosophy {
-        font-size: 0.85rem;
-    }
-
-    .stage-price {
-        font-size: 1.8rem;
-    }
-
-    .stage-price-original {
-        font-size: 1rem;
-    }
-
-    .stage-stock {
-        font-size: 0.75rem;
-    }
-
-    .stage-cta {
-        padding: 0.875rem 1.5rem;
-        font-size: 0.75rem;
-    }
-
-    .stage-progress {
-        bottom: 20px;
-    }
-
-    .stage-dot {
-        width: 8px;
-        height: 8px;
-    }
-
-    .stage-marketing-line {
-        font-size: 1.2rem;
-    }
-
-    .stage-marketing-sub {
-        font-size: 0.9rem;
-    }
-
-    .stage-locked-text {
-        font-size: 2rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .stage-card {
-        max-width: 200px;
-        max-height: 280px;
+    
+    .stage-card-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
     .stage-info {
-        padding: 1rem;
+        position: relative;
+        bottom: auto;
+        left: auto;
+        right: auto;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1.5rem 0.75rem 1rem;
+        margin-top: 1.5rem;
+        background: transparent;
+        text-align: center;
+    }
+    
+    .stage-info-left {
+        max-width: 100%;
+        align-items: center;
+        gap: 0.4rem;
+    }
+    
+    .stage-info-right {
+        align-items: center;
+        gap: 0.5rem;
     }
 
     .stage-subtitle {
-        font-size: 0.9rem;
+        font-size: 1rem;
+        line-height: 1.1;
     }
 
     .stage-philosophy {
-        font-size: 0.75rem;
+        font-size: 0.8rem;
+        text-align: center;
         line-height: 1.4;
+    }
+    
+    .stage-price-container {
+        gap: 0.2rem;
     }
 
     .stage-price {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
+    }
+
+    .stage-price-original {
+        font-size: 0.9rem;
+    }
+
+    .stage-stock {
+        font-size: 0.7rem;
+        text-align: center;
     }
 
     .stage-cta {
         padding: 0.75rem 1.25rem;
         font-size: 0.7rem;
+        width: 100%;
+        max-width: 260px;
+    }
+
+    .stage-progress {
+        bottom: 15px;
+        right: 12px;
+        gap: 0.5rem;
+    }
+
+    .stage-dot {
+        width: 7px;
+        height: 7px;
+    }
+
+    .stage-marketing-line {
+        font-size: 1.1rem;
+        line-height: 1.2;
+    }
+
+    .stage-marketing-sub {
+        font-size: 0.85rem;
+    }
+
+    .stage-locked-text {
+        font-size: 1.8rem;
+    }
+    
+    .stage-locked-content {
+        gap: 2rem;
+    }
+    
+    /* Reduced sentinel height for more compact mobile */
+    .chapter-sentinel {
+        height: 120vh !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .collection-wrapper {
+        height: 650vh !important; /* Reduced from 1000vh for more compact mobile */
+        background: #000; /* Fill gaps with black */
+    }
+    
+    .collection-stage {
+        padding: 55px 10px 8px; /* Increased top padding */
+        justify-content: flex-start;
+    }
+    
+    .stage-drop-badge {
+        font-size: 0.6rem;
+        padding: 0.25rem 0.6rem;
+        top: 16px; /* Moved down to prevent cropping */
+        left: 45px; /* Moved more to the right */
+        z-index: 20;
+    }
+    
+    .stage-counter {
+        font-size: 0.8rem;
+        top: 16px; /* Moved down to prevent cropping */
+        right: 45px; /* Moved more to the left */
+        z-index: 20;
+    }
+    
+    .stage-center {
+        margin-top: 8vh; /* Adjusted for new padding */
+    }
+    
+    .stage-card {
+        width: 60vw !important;
+        max-width: 180px !important;
+    }
+
+    .stage-info {
+        padding: 1.25rem 0.6rem 0.85rem;
+        gap: 0.6rem;
+        margin-top: 1.25rem;
+        background: transparent;
+    }
+    
+    .stage-info-left {
+        gap: 0.3rem;
+    }
+    
+    .stage-info-right {
+        gap: 0.4rem;
+    }
+
+    .stage-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .stage-philosophy {
+        font-size: 0.7rem;
+        line-height: 1.3;
+    }
+
+    .stage-price {
+        font-size: 1.4rem;
+    }
+    
+    .stage-price-original {
+        font-size: 0.8rem;
+    }
+    
+    .stage-stock {
+        font-size: 0.65rem;
+    }
+
+    .stage-cta {
+        padding: 0.7rem 1.1rem;
+        font-size: 0.65rem;
+        max-width: 220px;
+    }
+    
+    .stage-marketing-line {
+        font-size: 1rem;
+    }
+    
+    .stage-marketing-sub {
+        font-size: 0.75rem;
+    }
+    
+    .stage-locked-text {
+        font-size: 1.6rem;
+    }
+    
+    .stage-locked-content {
+        gap: 1.5rem;
+    }
+    
+    /* Reduced sentinel height for more compact mobile */
+    .chapter-sentinel {
+        height: 130vh !important;
     }
 }

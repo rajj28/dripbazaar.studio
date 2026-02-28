@@ -1,0 +1,235 @@
+/* Navbar Styles */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  padding: 20px 40px;
+}
+
+.navbar.scrolled {
+  background: rgba(0, 0, 0, 0.8);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+}
+
+.navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+}
+
+/* Logo */
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  font-family: var(--font-hero);
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+  transition: transform 0.3s ease;
+}
+
+.navbar-logo:hover {
+  transform: scale(1.05);
+}
+
+.navbar-logo-text {
+  color: #FFFFFF;
+}
+
+.navbar-logo-accent {
+  color: #F97316;
+}
+
+/* Desktop Navigation Links */
+.navbar-links {
+  display: flex;
+  gap: 35px;
+  align-items: center;
+}
+
+.navbar-link {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease;
+  position: relative;
+}
+
+.navbar-link::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #F97316;
+  transition: width 0.3s ease;
+}
+
+.navbar-link:hover {
+  color: #FFFFFF;
+}
+
+.navbar-link:hover::after {
+  width: 100%;
+}
+
+/* Action Icons */
+.navbar-actions {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.navbar-icon {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  border-radius: 50%;
+}
+
+.navbar-icon:hover {
+  color: #F97316;
+  background: rgba(249, 115, 22, 0.1);
+  transform: scale(1.1);
+}
+
+/* Mobile Toggle */
+.navbar-mobile-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  color: #FFFFFF;
+  cursor: pointer;
+  padding: 8px;
+  transition: transform 0.3s ease;
+}
+
+.navbar-mobile-toggle:hover {
+  transform: scale(1.1);
+}
+
+/* Mobile Menu */
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.mobile-menu.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mobile-menu-content {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding: 60px 40px;
+  text-align: center;
+}
+
+.mobile-menu-link {
+  color: #FFFFFF;
+  text-decoration: none;
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: var(--font-hero);
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.mobile-menu-link:hover {
+  color: #F97316;
+  transform: translateX(10px);
+}
+
+/* Mobile Responsive */
+@media (max-width: 968px) {
+  .navbar {
+    padding: 15px 30px;
+  }
+  
+  .navbar-links {
+    display: none;
+  }
+  
+  .navbar-icon:not(.navbar-mobile-toggle) {
+    display: none;
+  }
+  
+  .navbar-mobile-toggle {
+    display: flex;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 15px 20px;
+  }
+  
+  .navbar-logo {
+    font-size: 1.2rem;
+  }
+  
+  .mobile-menu-content {
+    gap: 30px;
+    padding: 40px 20px;
+  }
+  
+  .mobile-menu-link {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-logo {
+    font-size: 1rem;
+    letter-spacing: 1px;
+  }
+  
+  .mobile-menu-link {
+    font-size: 1.3rem;
+  }
+}
+
+/* Safe area support for notched devices */
+@supports (padding: max(0px)) {
+  .navbar {
+    padding-top: max(15px, env(safe-area-inset-top));
+    padding-left: max(20px, env(safe-area-inset-left));
+    padding-right: max(20px, env(safe-area-inset-right));
+  }
+}

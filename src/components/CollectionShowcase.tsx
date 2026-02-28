@@ -102,6 +102,10 @@ export default function CollectionShowcase() {
 
     useEffect(() => {
         const observers: IntersectionObserver[] = [];
+        
+        // Use different threshold for mobile
+        const isMobile = window.innerWidth <= 768;
+        const threshold = isMobile ? 0.3 : 0.5;
 
         chapters.forEach((_, i) => {
             const observer = new IntersectionObserver(
@@ -110,7 +114,10 @@ export default function CollectionShowcase() {
                         setActiveChapter(i);
                     }
                 },
-                { threshold: 0.5 }
+                { 
+                    threshold,
+                    rootMargin: isMobile ? '-10% 0px -10% 0px' : '0px'
+                }
             );
 
             if (sentinelRefs.current[i]) {
@@ -230,6 +237,8 @@ export default function CollectionShowcase() {
                                 src={chapter.image}
                                 alt={chapter.title}
                                 className="stage-card-img"
+                                loading="lazy"
+                                decoding="async"
                             />
                             {/* Per-chapter accent glow beneath/around card */}
                             <div

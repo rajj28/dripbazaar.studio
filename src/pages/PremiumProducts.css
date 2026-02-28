@@ -185,3 +185,43 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+@media (max-width: 1024px) {
+  .premium-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .premium-page {
+    padding: 90px 3% 50px;
+  }
+
+  .premium-hero {
+    margin-bottom: 30px;
+  }
+
+  .premium-hero-title {
+    font-size: clamp(2rem, 6vw, 2.5rem);
+  }
+
+  .premium-hero-subtitle {
+    font-size: clamp(0.9rem, 2vw, 1rem);
+  }
+
+  .premium-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .premium-card-info {
+    padding: 16px;
+  }
+
+  .premium-quick-add {
+    padding: 12px 24px;
+    font-size: 0.85rem;
+  }
+}

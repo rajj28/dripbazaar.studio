@@ -173,3 +173,64 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+@media (max-width: 1024px) {
+  .payment-page {
+    padding: 110px 5% 70px;
+  }
+
+  .payment-container {
+    padding: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-page {
+    padding: 90px 3% 50px;
+  }
+
+  .payment-container {
+    padding: 20px;
+  }
+
+  .payment-container h1 {
+    font-size: 2rem;
+    margin-bottom: 24px;
+  }
+
+  .payment-method {
+    padding: 20px;
+  }
+
+  .payment-method-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .payment-method-options {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding-left: 36px;
+  }
+
+  .payment-option {
+    font-size: 0.85rem;
+  }
+
+  .payment-summary {
+    padding: 20px;
+  }
+
+  .payment-total {
+    font-size: 2rem;
+  }
+
+  .payment-submit-btn {
+    padding: 16px;
+    font-size: 1rem;
+  }
+
+  .payment-secure {
+    font-size: 0.85rem;
+  }
+}

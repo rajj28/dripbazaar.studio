@@ -52,6 +52,15 @@ body {
   background-attachment: fixed;
 }
 
+/* Mobile hero optimization */
+@media (max-width: 768px) {
+  .hero-section {
+    height: auto;
+    min-height: 100vh;
+    background-attachment: scroll;
+  }
+}
+
 .hero-section::before {
   content: '';
   position: absolute;

@@ -1,0 +1,802 @@
+/* ========================================
+   RESPONSIVE & PERFORMANCE OPTIMIZATIONS
+   Desktop, Tablet, Mobile - All Devices
+   ======================================== */
+
+/* ========================================
+   GLOBAL PERFORMANCE OPTIMIZATIONS
+   ======================================== */
+
+/* Prevent horizontal scroll and improve touch */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Optimize for mobile performance */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* Smooth scrolling with better mobile support */
+@media (max-width: 768px) {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Disable 3D transforms on mobile for better performance */
+@media (max-width: 768px) {
+  .carousel-container,
+  .scene,
+  .carousel-ring,
+  .carousel-item {
+    transform: none !important;
+    perspective: none !important;
+    transform-style: flat !important;
+  }
+  
+  /* Simplify 3D carousel to 2D on mobile */
+  .carousel-container {
+    height: auto !important;
+    min-height: 300px !important;
+    padding: 20px !important;
+  }
+  
+  .scene {
+    width: 100% !important;
+    max-width: 280px !important;
+    height: auto !important;
+    margin: 0 auto !important;
+  }
+  
+  .carousel-ring {
+    position: relative !important;
+    display: flex !important;
+    gap: 15px !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 10px !important;
+  }
+  
+  .carousel-item {
+    position: relative !important;
+    flex: 0 0 auto !important;
+    width: 200px !important;
+    height: 280px !important;
+    scroll-snap-align: center !important;
+    transform: none !important;
+  }
+}
+
+/* Mobile-friendly hero section */
+@media (max-width: 768px) {
+  .hero-section {
+    height: auto;
+    min-height: 100vh;
+    background-attachment: scroll;
+    background-size: cover;
+  }
+  
+  .hero-section > div {
+    position: relative !important;
+    height: auto !important;
+    min-height: 100vh;
+    padding: 80px 20px 40px !important;
+    padding-left: 20px !important; /* Override desktop left padding */
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    align-items: center !important; /* Center on mobile */
+  }
+  
+  .hero-section > div > div:nth-child(2) {
+    align-items: center !important; /* Center carousel container on mobile */
+    padding-left: 5% !important; /* Reset left padding on mobile */
+  }
+  
+  /* Ensure headline is visible */
+  .headline-container {
+    position: relative !important;
+    height: auto !important;
+    min-height: auto !important;
+    margin-bottom: 20px !important;
+  }
+  
+  .headline-content,
+  .headline-wrapper,
+  .headline-logo,
+  .headline-text,
+  .headline-tagline {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  /* Center welcome text on mobile */
+  .hero-welcome-text {
+    text-align: center !important;
+  }
+}
+
+/* Optimize headline for mobile */
+@media (max-width: 768px) {
+  .headline-container {
+    height: auto !important;
+    min-height: auto !important;
+    position: relative !important;
+    padding: 20px 15px !important;
+    overflow: visible !important;
+    margin-bottom: 0 !important;
+  }
+  
+  .headline-content {
+    width: 100% !important;
+    padding: 15px 10px !important;
+  }
+  
+  .headline-wrapper {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+  
+  .headline-logo {
+    height: 50px !important;
+    max-width: 50px !important;
+    transform: none !important;
+  }
+  
+  .headline-text {
+    font-size: 2.5rem !important;
+    line-height: 1.2 !important;
+    white-space: normal !important;
+    text-align: center !important;
+    width: 100% !important;
+  }
+  
+  .headline-tagline {
+    font-size: 0.8rem !important;
+    width: 100% !important;
+    text-align: center !important;
+  }
+  
+  /* Adjust hero section container for mobile */
+  .hero-section > div {
+    padding-top: 60px !important;
+  }
+  
+  .hero-section > div > div:nth-child(2) {
+    margin-top: 10px !important;
+    padding-top: 0 !important;
+  }
+}
+
+/* Mobile-optimized collection showcase */
+@media (max-width: 768px) {
+  .collection-wrapper {
+    height: auto !important;
+    min-height: 100vh;
+    background: #000 !important; /* Prevent orange showing through */
+  }
+  
+  .collection-stage {
+    position: relative !important;
+    height: auto !important;
+    min-height: 100vh;
+    padding: 40px 20px;
+    background: transparent;
+  }
+  
+  .stage-ghost-text {
+    font-size: 4rem !important;
+    opacity: 0.02;
+  }
+  
+  .stage-card {
+    width: 85vw !important;
+    max-width: 300px !important;
+    height: auto !important;
+    aspect-ratio: 2/3;
+  }
+  
+  .stage-info {
+    position: relative !important;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 20px;
+    gap: 20px;
+  }
+  
+  .stage-info-left,
+  .stage-info-right {
+    max-width: 100%;
+    align-items: flex-start;
+  }
+  
+  .stage-cta {
+    width: 100%;
+    padding: 15px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Mobile-friendly featured products */
+@media (max-width: 768px) {
+  .featured-section {
+    padding: 60px 20px;
+    margin-top: 0;
+  }
+  
+  .featured-header {
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+  
+  .featured-title {
+    font-size: 2rem !important;
+  }
+  
+  .featured-grid {
+    grid-template-columns: 1fr !important;
+    gap: 30px;
+  }
+  
+  .featured-card-image-wrapper {
+    aspect-ratio: 3/4;
+  }
+  
+  .featured-quick-add {
+    position: static !important;
+    transform: none !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    margin-top: 10px;
+    width: 100%;
+  }
+}
+
+/* Mobile footer optimization */
+@media (max-width: 768px) {
+  .footer-3d-canvas-container {
+    height: 40vh;
+    opacity: 0.6;
+  }
+  
+  .footer-content {
+    padding: 45vh 20px 40px;
+  }
+  
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 30px;
+  }
+  
+  .footer-brand {
+    font-size: 24px !important;
+  }
+  
+  .footer-socials {
+    justify-content: flex-start;
+  }
+  
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .footer-legal {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* Touch-friendly buttons */
+@media (max-width: 768px) {
+  button,
+  .stage-cta,
+  .featured-view-all,
+  .featured-quick-add,
+  .footer-newsletter-button {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px 20px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Improve text readability on mobile */
+@media (max-width: 768px) {
+  body {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  
+  p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.2;
+    word-wrap: break-word;
+  }
+}
+
+/* Optimize images for mobile */
+@media (max-width: 768px) {
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  .stage-card-img,
+  .featured-card-image {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* Reduce animations on mobile for performance */
+@media (max-width: 768px) and (prefers-reduced-motion: no-preference) {
+  * {
+    animation-duration: 0.3s !important;
+    transition-duration: 0.2s !important;
+  }
+}
+
+/* Fix viewport height issues on mobile browsers */
+@media (max-width: 768px) {
+  .hero-section,
+  .collection-stage {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* Improve form inputs on mobile */
+@media (max-width: 768px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important; /* Prevents zoom on iOS */
+    padding: 12px;
+    border-radius: 8px;
+  }
+  
+  .footer-newsletter-input {
+    font-size: 16px !important;
+  }
+}
+
+/* Mobile navigation improvements */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 15px 20px;
+  }
+  
+  .navbar-container {
+    flex-wrap: nowrap;
+  }
+  
+  .navbar-logo {
+    font-size: 1.2rem;
+  }
+  
+  .navbar-links {
+    display: none;
+  }
+  
+  .navbar-mobile-toggle {
+    display: block !important;
+  }
+  
+  .mobile-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  
+  .mobile-menu.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .mobile-menu-content {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding: 40px;
+  }
+  
+  .mobile-menu-link {
+    font-size: 1.5rem;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+  
+  .mobile-menu-link:hover {
+    color: #F97316;
+  }
+}
+
+/* Prevent text selection on interactive elements */
+@media (max-width: 768px) {
+  .carousel-item,
+  .stage-card,
+  .featured-card,
+  button {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
+/* Optimize scroll performance */
+@media (max-width: 768px) {
+  .collection-wrapper,
+  .featured-section,
+  .footer-3d {
+    will-change: auto;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+}
+
+/* Safe area insets for notched devices */
+@supports (padding: max(0px)) {
+  @media (max-width: 768px) {
+    .navbar {
+      padding-top: max(15px, env(safe-area-inset-top));
+    }
+    
+    .footer-content {
+      padding-bottom: max(40px, env(safe-area-inset-bottom));
+    }
+  }
+}
+
+
+/* ========================================
+   TABLET OPTIMIZATIONS (1024px and below)
+   ======================================== */
+
+@media (max-width: 1024px) {
+  /* Optimize grid layouts for tablets */
+  .cart-container,
+  .checkout-container {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .checkout-form-row {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Adjust product grids */
+  .premium-grid,
+  .featured-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 24px;
+  }
+  
+  /* Optimize hero section */
+  .hero-section {
+    padding: 100px 5% 60px;
+  }
+  
+  /* Adjust font sizes */
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+  }
+  
+  h2 {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+  }
+  
+  /* Optimize buttons */
+  button,
+  .stage-cta,
+  .premium-cta {
+    min-height: 48px;
+    padding: 14px 24px;
+  }
+}
+
+/* ========================================
+   SMALL MOBILE OPTIMIZATIONS (480px and below)
+   ======================================== */
+
+@media (max-width: 480px) {
+  /* Single column layouts */
+  .premium-grid,
+  .featured-grid,
+  .reels-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+  }
+  
+  /* Optimize cart items */
+  .cart-item {
+    grid-template-columns: 70px 1fr !important;
+    gap: 12px;
+    padding: 16px;
+  }
+  
+  .cart-item-image {
+    width: 70px !important;
+    height: 90px !important;
+  }
+  
+  /* Optimize product detail */
+  .product-detail-container {
+    gap: 30px;
+  }
+  
+  .product-detail-thumbnails {
+    gap: 8px;
+  }
+  
+  .product-detail-thumbnail {
+    width: 60px !important;
+    height: 75px !important;
+  }
+  
+  /* Optimize checkout */
+  .checkout-section {
+    padding: 20px !important;
+  }
+  
+  .checkout-form-group input {
+    padding: 14px;
+    font-size: 16px !important; /* Prevents zoom on iOS */
+  }
+  
+  /* Optimize payment */
+  .payment-container {
+    padding: 20px !important;
+  }
+  
+  .payment-method-options {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Optimize admin dashboard */
+  .admin-stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .admin-orders-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Optimize auth pages */
+  .auth-container {
+    padding: 20px !important;
+    max-width: 100%;
+  }
+  
+  /* Optimize pre-booking */
+  .prebook-form-row {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Smaller text for very small screens */
+  body {
+    font-size: 15px;
+  }
+  
+  h1 {
+    font-size: clamp(1.75rem, 6vw, 2.5rem);
+  }
+  
+  h2 {
+    font-size: clamp(1.25rem, 5vw, 2rem);
+  }
+  
+  /* Optimize buttons for small screens */
+  button,
+  .stage-cta,
+  .premium-cta,
+  .cart-checkout-btn,
+  .checkout-continue-btn {
+    padding: 12px 20px;
+    font-size: 0.85rem;
+  }
+}
+
+/* ========================================
+   PERFORMANCE: REDUCE ANIMATIONS ON MOBILE
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* Disable expensive 3D transforms on mobile only */
+  .portal-gateway-3d,
+  .temple-experience {
+    transform: none !important;
+    perspective: none !important;
+    transform-style: flat !important;
+  }
+  
+  /* Reduce animation complexity */
+  * {
+    animation-duration: 0.3s !important;
+    transition-duration: 0.2s !important;
+  }
+  
+  /* Disable particle effects on mobile */
+  .smoke-particles {
+    display: none !important;
+  }
+  
+  /* Simplify shadows */
+  .stage-card,
+  .premium-card,
+  .featured-card {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+  }
+}
+
+/* ========================================
+   PERFORMANCE: OPTIMIZE IMAGES
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* Ensure images are responsive */
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  /* Optimize background images */
+  .hero-section,
+  .story-video-section {
+    background-attachment: scroll !important;
+    background-size: cover !important;
+  }
+  
+  /* Reduce canvas quality on mobile */
+  canvas {
+    image-rendering: auto;
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY: FOCUS STATES
+   ======================================== */
+
+/* Visible focus for keyboard navigation */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #F97316;
+  outline-offset: 2px;
+}
+
+/* ========================================
+   PRINT STYLES
+   ======================================== */
+
+@media print {
+  /* Hide non-essential elements */
+  .navbar,
+  .footer-3d,
+  .scroll-indicator,
+  .stage-progress,
+  button {
+    display: none !important;
+  }
+  
+  /* Optimize for print */
+  body {
+    background: white;
+    color: black;
+  }
+  
+  /* Show all content */
+  .collection-wrapper,
+  .paper-crumple-scroll-container {
+    height: auto !important;
+  }
+}
+
+/* ========================================
+   DARK MODE SUPPORT (Future Enhancement)
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  /* Already dark by default, but can add overrides here */
+}
+
+/* ========================================
+   HIGH CONTRAST MODE
+   ======================================== */
+
+@media (prefers-contrast: high) {
+  /* Increase contrast for accessibility */
+  body {
+    color: #FFFFFF;
+  }
+  
+  button,
+  .stage-cta,
+  .premium-cta {
+    border-width: 3px;
+  }
+}
+
+/* ========================================
+   LANDSCAPE ORIENTATION FIXES
+   ======================================== */
+
+@media (max-width: 968px) and (orientation: landscape) {
+  /* Adjust heights for landscape mobile */
+  .hero-section,
+  .collection-stage {
+    min-height: 100vh;
+  }
+  
+  /* Reduce vertical padding */
+  .hero-section > div {
+    padding-top: 60px !important;
+    padding-bottom: 20px !important;
+  }
+  
+  /* Optimize carousel for landscape */
+  .carousel-container {
+    height: 50vh;
+  }
+}
+
+/* ========================================
+   VERY LARGE SCREENS (1920px+)
+   ======================================== */
+
+@media (min-width: 1920px) {
+  /* Constrain max widths */
+  .cart-page,
+  .checkout-page,
+  .payment-page,
+  .product-detail-page,
+  .premium-page {
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+  
+  /* Optimize grid layouts */
+  .premium-grid,
+  .featured-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

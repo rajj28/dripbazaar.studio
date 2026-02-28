@@ -1,28 +1,54 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
 import { CartProvider } from './context/CartContext';
 import NavOverlay from './components/NavOverlay';
+
+// Eager load HomePage (critical for initial render)
 import HomePage from './pages/HomePage';
-import PremiumProducts from './pages/PremiumProducts';
-import ProductDetail from './pages/ProductDetail';
-import Cart from './pages/Cart';
-import Checkout from './pages/Checkout';
-import Payment from './pages/Payment';
-import OrderSuccess from './pages/OrderSuccess';
+
+// Lazy load all other routes
+const PremiumProducts = lazy(() => import('./pages/PremiumProducts'));
+const ProductDetail = lazy(() => import('./pages/ProductDetail'));
+const Cart = lazy(() => import('./pages/Cart'));
+const Checkout = lazy(() => import('./pages/Checkout'));
+const Payment = lazy(() => import('./pages/Payment'));
+const OrderSuccess = lazy(() => import('./pages/OrderSuccess'));
+
+// Loading fallback component
+function PageLoader() {
+  return (
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '100vh',
+      background: 'linear-gradient(to bottom, #F97316, #C2410C)',
+      color: 'white',
+      fontFamily: 'var(--font-hero)',
+      fontSize: '1.5rem',
+      letterSpacing: '0.2em'
+    }}>
+      LOADING...
+    </div>
+  );
+}
 
 export default function AppRouter() {
   return (
     <BrowserRouter>
       <CartProvider>
         <NavOverlay />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/premium" element={<PremiumProducts />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/order-success" element={<OrderSuccess />} />
-        </Routes>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/premium" element={<PremiumProducts />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/payment" element={<Payment />} />
+            <Route path="/order-success" element={<OrderSuccess />} />
+          </Routes>
+        </Suspense>
       </CartProvider>
     </BrowserRouter>
   );

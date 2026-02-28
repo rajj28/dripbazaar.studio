@@ -1,13 +1,38 @@
+import { lazy, Suspense } from 'react';
 import HeroHeadline from './components/HeroHeadline';
 import Carousel3D from './components/Carousel3D';
 import ScrollIndicator from './components/ScrollIndicator';
 import NavOverlay from './components/NavOverlay';
 import CollectionShowcase from './components/CollectionShowcase';
-import PaperCrumpleScroll from './components/PaperCrumpleScroll';
-import FeaturedProducts from './components/FeaturedProducts';
-import StoryPage from './components/StoryPage';
-import Footer3D from './components/Footer3D';
 import './App.css';
+
+// Lazy load below-fold components
+const PaperCrumpleScroll = lazy(() => import('./components/PaperCrumpleScroll'));
+const FeaturedProducts = lazy(() => import('./components/FeaturedProducts'));
+const StoryPage = lazy(() => import('./components/StoryPage'));
+const Footer3D = lazy(() => import('./components/Footer3D'));
+
+// Simple loading fallback
+function SectionLoader() {
+  return (
+    <div style={{
+      minHeight: '50vh',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      background: 'transparent'
+    }}>
+      <div style={{
+        color: 'rgba(255, 255, 255, 0.5)',
+        fontSize: '0.9rem',
+        letterSpacing: '0.2em',
+        fontFamily: 'var(--font-primary)'
+      }}>
+        Loading...
+      </div>
+    </div>
+  );
+}
 
 function App() {
   return (
@@ -16,13 +41,30 @@ function App() {
 
       {/* Hero section — extended for scroll effect */}
       <section className="hero-section">
-        <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'flex', flexDirection: 'column', zIndex: 1 }}>
+        <div style={{ 
+          position: 'sticky', 
+          top: 0, 
+          height: '100vh', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          zIndex: 1,
+          paddingTop: '80px'
+        }}>
           <HeroHeadline />
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', paddingLeft: '15%', paddingTop: '8vh' }}>
+          <div style={{ 
+            flex: 1, 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'flex-start', /* Changed from center to flex-start */
+            justifyContent: 'center', 
+            padding: '2vh 5% 0',
+            paddingLeft: '15%', /* Increased from 10% to 15% to shift right */
+            marginTop: '20px'
+          }}>
             <div>
               <Carousel3D />
             </div>
-            <div className="hero-welcome-text" style={{ marginLeft: '0', alignSelf: 'flex-start' }}>
+            <div className="hero-welcome-text" style={{ marginTop: '2rem', textAlign: 'left', width: '100%', paddingLeft: '0' }}>
               <p className="hero-welcome-subtitle">India's First Verified Thrift Marketplace</p>
             </div>
           </div>
@@ -33,17 +75,26 @@ function App() {
       {/* Collection section — separate scroll page */}
       <CollectionShowcase />
 
-      {/* Featured Products - Everyday Essentials */}
-      <FeaturedProducts />
+      {/* Lazy loaded sections below */}
+      <Suspense fallback={<SectionLoader />}>
+        {/* Featured Products - Everyday Essentials */}
+        <FeaturedProducts />
+      </Suspense>
 
-      {/* Paper Crumple Scroll Effect - Drip Riwaaz Premium */}
-      <PaperCrumpleScroll />
+      <Suspense fallback={<SectionLoader />}>
+        {/* Paper Crumple Scroll Effect - Drip Riwaaz Premium */}
+        <PaperCrumpleScroll />
+      </Suspense>
 
-      {/* The Story Page - Video + Reels */}
-      <StoryPage />
+      <Suspense fallback={<SectionLoader />}>
+        {/* The Story Page - Video + Reels */}
+        <StoryPage />
+      </Suspense>
 
-      {/* Footer with 3D Interactive Head */}
-      <Footer3D />
+      <Suspense fallback={<SectionLoader />}>
+        {/* Footer with 3D Interactive Head */}
+        <Footer3D />
+      </Suspense>
     </>
   );
 }

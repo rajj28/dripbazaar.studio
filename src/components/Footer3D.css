@@ -183,6 +183,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    width: 100%;
 }
 
 .footer-newsletter-input {
@@ -194,6 +195,8 @@
     font-family: 'Helvetica Neue', Arial, sans-serif;
     transition: all 0.3s ease;
     border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .footer-newsletter-input:focus {
@@ -219,6 +222,8 @@
     transition: all 0.3s ease;
     font-family: 'Helvetica Neue', Arial, sans-serif;
     border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .footer-newsletter-button:hover {
@@ -295,13 +300,23 @@
 }
 
 @media (max-width: 768px) {
+    .footer-3d {
+        min-height: auto;
+        padding-bottom: 40px; /* Add bottom padding to prevent cropping */
+    }
+
+    .footer-3d-canvas-container {
+        height: 50%; /* Reduce canvas height on mobile */
+    }
+
     .footer-content {
-        padding: 150px 24px 40px;
+        padding: 150px 24px 60px 40px; /* Moved content to the right: left 24px -> 40px */
     }
 
     .footer-grid {
         grid-template-columns: 1fr;
         gap: 40px;
+        margin-bottom: 60px; /* Increased from 80px default */
     }
 
     .footer-brand {
@@ -309,14 +324,76 @@
         letter-spacing: 6px;
     }
 
+    .footer-newsletter-form {
+        width: 100%;
+    }
+
+    .footer-newsletter-input {
+        width: 100%;
+        padding: 16px;
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+
+    .footer-newsletter-button {
+        width: 100%;
+        padding: 16px 20px;
+        font-size: 13px;
+    }
+
     .footer-bottom {
         flex-direction: column;
         align-items: flex-start;
         gap: 20px;
+        padding-bottom: 20px; /* Add extra bottom padding */
     }
 
     .footer-legal {
         flex-direction: column;
         gap: 12px;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+    .footer-3d {
+        padding-bottom: 60px; /* More padding for very small screens */
+    }
+
+    .footer-content {
+        padding: 120px 20px 80px 35px; /* Moved content to the right: left 20px -> 35px */
+    }
+
+    .footer-grid {
+        gap: 32px;
+        margin-bottom: 50px;
+    }
+
+    .footer-brand {
+        font-size: 24px;
+        letter-spacing: 4px;
+    }
+
+    .footer-newsletter {
+        width: 100%;
+    }
+
+    .footer-newsletter-form {
+        width: 100%;
+    }
+
+    .footer-newsletter-input {
+        width: 100%;
+        padding: 14px;
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+
+    .footer-newsletter-button {
+        width: 100%;
+        padding: 14px 18px;
+        font-size: 12px;
+    }
+
+    .footer-bottom {
+        padding-bottom: 30px;
     }
 }
