@@ -3,6 +3,9 @@
   background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
   padding: 2rem;
   color: white;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 .admin-header {
@@ -418,6 +421,10 @@
 @media (max-width: 768px) {
   .admin-dashboard {
     padding: 1rem;
+    padding-top: 80px; /* Space for profile icon */
+    padding-bottom: 2rem;
+    height: auto;
+    min-height: 100vh;
   }
 
   .admin-header {
@@ -426,12 +433,52 @@
     gap: 1rem;
   }
 
+  .admin-title {
+    font-size: 1.8rem;
+  }
+
+  .admin-filters {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .admin-filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
   .orders-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .order-card {
+    padding: 1rem;
+  }
+
+  .order-card-footer {
+    flex-direction: column;
+  }
+
+  .order-btn {
+    width: 100%;
   }
 
   .modal-overlay {
     padding: 1rem;
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+
+  .modal-content {
+    max-height: calc(100vh - 4rem);
+    margin: 0;
   }
 
   .modal-header,
@@ -440,7 +487,15 @@
     padding: 1.5rem;
   }
 
+  .modal-header h2 {
+    font-size: 1.4rem;
+  }
+
   .modal-footer {
     flex-direction: column;
+  }
+
+  .modal-btn {
+    width: 100%;
   }
 }
