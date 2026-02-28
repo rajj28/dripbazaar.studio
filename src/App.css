@@ -1,0 +1,126 @@
+/* Smooth scrolling and performance optimizations */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Center the carousel in hero section */
+.hero-carousel-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateZ(0);
+}
+
+/* Cleaned up default App.css */
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  will-change: auto;
+  transform: translateZ(0);
+}
+
+/* Fully isolated hero viewport — collection section starts fresh below */
+.hero-section {
+  position: relative;
+  width: 100%;
+  height: 200vh;
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  background-image: url('/drip bazaar all assests/hero3.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.5) 100%);
+  z-index: 0;
+}
+
+.hero-welcome-text {
+  margin-top: 3rem;
+  text-align: center;
+  z-index: 10;
+}
+
+.hero-welcome-text p {
+  font-family: var(--font-hero);
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #ffffff;
+  letter-spacing: 0.1em;
+  margin: 0;
+  text-shadow: 0px 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+.hero-welcome-subtitle {
+  font-family: var(--font-primary);
+  font-size: clamp(0.85rem, 1.5vw, 1.1rem);
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.08em;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .hero-welcome-text {
+    margin-top: 2rem;
+  }
+}
+
+/* Performance optimization for images */
+img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Smooth video playback */
+video {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* GPU acceleration for animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

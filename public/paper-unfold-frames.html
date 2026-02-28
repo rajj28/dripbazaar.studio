@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realistic Paper Unfold - Frame Based</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            overflow-x: hidden;
+            background: #1a1410;
+        }
+
+        .paper-container {
+            height: 400vh;
+            position: relative;
+            background: linear-gradient(135deg, #2c2416 0%, #1a1410 100%);
+        }
+
+        .paper-sticky {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #paperCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .content-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+            pointer-events: none;
+            mix-blend-mode: multiply;
+        }
+
+        .title {
+            font-size: 72px;
+            font-weight: 700;
+            color: #3d2f1f;
+            letter-spacing: 16px;
+            text-transform: uppercase;
+            text-shadow: 
+                2px 2px 4px rgba(0, 0, 0, 0.2),
+                -1px -1px 2px rgba(255, 255, 255, 0.3);
+            margin-bottom: 15px;
+            font-family: Georgia, serif;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #5d4a3a;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .debug-info {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            z-index: 1000;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="paper-container">
+        <div class="paper-sticky">
+            <canvas id="paperCanvas"></canvas>
+            <div class="content-overlay">
+                <h1 class="title">RIWAAZ</h1>
+                <p class="subtitle">Unfold the Tradition</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="debug-info" id="debugInfo">Frame: 0 / 60</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        const canvas = document.getElementById('paperCanvas');
+        const ctx = canvas.getContext('2d');
+        const debugInfo = document.getElementById('debugInfo');
+
+        // Set canvas size
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Paper properties
+        const TOTAL_FRAMES = 60;
+        const PAPER_COLOR = '#f5f5dc';
+        const SHADOW_COLOR = 'rgba(0, 0, 0, 0.3)';
+        const FOLD_LINE_COLOR = 'rgba(0, 0, 0, 0.1)';
+
+        // Current frame
+        let currentFrame = 0;
+
+        /**
+         * Generate paper fiber texture
+         */
+        function generatePaperTexture(width, height) {
+            const textureCanvas = document.createElement('canvas');
+            textureCanvas.width = width;
+            textureCanvas.height = height;
+            const textureCtx = textureCanvas.getContext('2d');
+
+            // Base color
+            textureCtx.fillStyle = PAPER_COLOR;
+            textureCtx.fillRect(0, 0, width, height);
+
+            // Add noise for paper fibers
+            const imageData = textureCtx.getImageData(0, 0, width, height);
+            const data = imageData.data;
+
+            for (let i = 0; i < data.length; i += 4) {
+                const noise = (Math.random() - 0.5) * 10;
+                data[i] += noise;     // R
+                data[i + 1] += noise; // G
+                data[i + 2] += noise; // B
+            }
+
+            textureCtx.putImageData(imageData, 0, 0);
+
+            // Add subtle grain lines
+            textureCtx.strokeStyle = 'rgba(0, 0, 0, 0.02)';
+            textureCtx.lineWidth = 0.5;
+            for (let i = 0; i < 100; i++) {
+                textureCtx.beginPath();
+                textureCtx.moveTo(Math.random() * width, Math.random() * height);
+                textureCtx.lineTo(Math.random() * width, Math.random() * height);
+                textureCtx.stroke();
+            }
+
+            return textureCanvas;
+        }
+
+        // Generate paper texture once
+        const paperTexture = generatePaperTexture(canvas.width, canvas.height);
+
+        /**
+         * Draw a folded paper segment with realistic lighting and shadows
+         */
+        function drawPaperSegment(x, y, width, height, foldAngle, foldDirection, lightIntensity) {
+            ctx.save();
+
+            // Calculate fold transformation
+            const foldProgress = foldAngle / 180; // 0 to 1
+            const perspective = 0.6; // Perspective strength
+
+            // Create gradient for lighting based on fold angle
+            const lightGradient = ctx.createLinearGradient(
+                x, y,
+                x + width * Math.cos(foldAngle * Math.PI / 180),
+                y + height
+            );
+
+            // Dynamic lighting based on fold angle
+            const baseLight = 0.7 + lightIntensity * 0.3;
+            const shadowStrength = Math.sin(foldAngle * Math.PI / 180) * 0.4;
+
+            lightGradient.addColorStop(0, `rgba(245, 245, 220, ${baseLight})`);
+            lightGradient.addColorStop(0.5, `rgba(245, 245, 220, ${baseLight - shadowStrength * 0.3})`);
+            lightGradient.addColorStop(1, `rgba(245, 245, 220, ${baseLight - shadowStrength})`);
+
+            // Draw paper texture
+            ctx.globalAlpha = 1;
+            ctx.drawImage(paperTexture, x, y, width, height);
+
+            // Apply lighting
+            ctx.globalCompositeOperation = 'multiply';
+            ctx.fillStyle = lightGradient;
+            ctx.fillRect(x, y, width, height);
+            ctx.globalCompositeOperation = 'source-over';
+
+            // Draw fold line
+            if (foldAngle > 5) {
+                ctx.strokeStyle = FOLD_LINE_COLOR;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                if (foldDirection === 'diagonal-right') {
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x + width, y + height);
+                } else {
+                    ctx.moveTo(x + width, y);
+                    ctx.lineTo(x, y + height);
+                }
+                ctx.stroke();
+            }
+
+            // Draw shadow on the fold
+            if (foldAngle > 10) {
+                const shadowGradient = ctx.createLinearGradient(
+                    x + width / 2, y,
+                    x + width / 2, y + height
+                );
+                shadowGradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+                shadowGradient.addColorStop(0.5, `rgba(0, 0, 0, ${shadowStrength * 0.5})`);
+                shadowGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+                ctx.fillStyle = shadowGradient;
+                ctx.fillRect(x, y, width, height);
+            }
+
+            // Add edge highlights for paper thickness
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x, y, width, height);
+
+            ctx.restore();
+        }
+
+        /**
+         * Render a specific frame of the paper unfolding animation
+         */
+        function renderFrame(frameNumber) {
+            // Clear canvas
+            ctx.fillStyle = '#2c2416';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const progress = frameNumber / TOTAL_FRAMES;
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            // Paper dimensions
+            const paperWidth = Math.min(canvas.width * 0.6, 800);
+            const paperHeight = Math.min(canvas.height * 0.8, 1000);
+            const segmentHeight = paperHeight / 6;
+
+            // Draw 6 segments of paper, each folding at different times
+            for (let i = 0; i < 6; i++) {
+                const segmentProgress = Math.max(0, Math.min(1, (progress - i * 0.12) / 0.25));
+                const foldAngle = segmentProgress * 180; // 0 to 180 degrees
+                const foldDirection = i % 2 === 0 ? 'diagonal-right' : 'diagonal-left';
+
+                // Calculate position with perspective
+                const yOffset = (i - 2.5) * segmentHeight;
+                const xOffset = Math.sin(segmentProgress * Math.PI) * (i % 2 === 0 ? -30 : 30);
+                const scale = 1 - segmentProgress * 0.1;
+
+                const segmentX = centerX - (paperWidth * scale) / 2 + xOffset;
+                const segmentY = centerY + yOffset * scale;
+                const segmentW = paperWidth * scale;
+                const segmentH = segmentHeight * scale;
+
+                // Light intensity varies with fold
+                const lightIntensity = 0.8 + Math.cos(segmentProgress * Math.PI) * 0.2;
+
+                // Apply 3D transformation
+                ctx.save();
+                ctx.translate(segmentX + segmentW / 2, segmentY + segmentH / 2);
+
+                // Rotate based on fold direction
+                if (foldDirection === 'diagonal-right') {
+                    ctx.rotate((-foldAngle / 180) * Math.PI * 0.3);
+                } else {
+                    ctx.rotate((foldAngle / 180) * Math.PI * 0.3);
+                }
+
+                // Add perspective skew
+                const skewAmount = Math.sin(segmentProgress * Math.PI) * 0.2;
+                ctx.transform(1, skewAmount * (i % 2 === 0 ? 1 : -1), 0, 1, 0, 0);
+
+                ctx.translate(-segmentW / 2, -segmentH / 2);
+
+                // Draw the segment
+                drawPaperSegment(0, 0, segmentW, segmentH, foldAngle, foldDirection, lightIntensity);
+
+                ctx.restore();
+
+                // Draw cast shadow below each segment
+                if (foldAngle > 20) {
+                    const shadowOpacity = Math.min(0.4, (foldAngle / 180) * 0.4);
+                    const shadowBlur = 20 + (foldAngle / 180) * 30;
+
+                    ctx.save();
+                    ctx.shadowColor = SHADOW_COLOR;
+                    ctx.shadowBlur = shadowBlur;
+                    ctx.shadowOffsetX = 10;
+                    ctx.shadowOffsetY = 15;
+                    ctx.globalAlpha = shadowOpacity;
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                    ctx.fillRect(segmentX, segmentY + segmentH, segmentW, 5);
+                    ctx.restore();
+                }
+            }
+
+            // Update debug info
+            debugInfo.textContent = `Frame: ${frameNumber} / ${TOTAL_FRAMES} | Progress: ${(progress * 100).toFixed(1)}%`;
+        }
+
+        // Initial render
+        renderFrame(0);
+
+        // GSAP ScrollTrigger for smooth frame interpolation
+        gsap.to({ frame: 0 }, {
+            frame: TOTAL_FRAMES,
+            ease: 'none',
+            scrollTrigger: {
+                trigger: '.paper-container',
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 0.5,
+                onUpdate: (self) => {
+                    const frame = Math.floor(self.progress * TOTAL_FRAMES);
+                    if (frame !== currentFrame) {
+                        currentFrame = frame;
+                        renderFrame(currentFrame);
+                    }
+                }
+            }
+        });
+
+        // Redraw on resize
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            renderFrame(currentFrame);
+        });
+    </script>
+</body>
+</html>

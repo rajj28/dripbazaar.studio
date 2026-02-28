@@ -1,0 +1,170 @@
+/* The wrapper that handles hover events for both the trigger button and the panel */
+.nav-hover-zone {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 200;
+    /* Large hover area to avoid the panel closing when moving from button to panel */
+    padding: 2rem;
+}
+
+.nav-trigger-btn {
+    display: block;
+    margin-left: auto;
+    /* Push + to the right inside the zone */
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: transform 0.3s ease;
+    mix-blend-mode: difference;
+}
+
+.nav-trigger-btn:hover {
+    transform: rotate(90deg) scale(1.1);
+}
+
+.nav-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: min(700px, 100vw);
+    /* Widen the panel to give text more breathing room */
+    height: 100vh;
+    background-color: var(--color-orange-dark);
+    /* Using dark orange for stark contrast */
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 2rem;
+    box-shadow: -20px 0 50px rgba(0, 0, 0, 0.5);
+    /* Drop shadow to separate from background */
+}
+
+.nav-overlay-header {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.nav-close-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: transform 0.3s ease;
+}
+
+.nav-close-btn:hover {
+    transform: rotate(90deg) scale(1.1);
+}
+
+.nav-links-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    padding-left: 0;
+    /* Remove padding to maximize space */
+    margin-top: -5vh;
+    /* Center it slightly higher visually */
+    width: 100%;
+    overflow: visible;
+    /* Ensure nothing hides */
+}
+
+.nav-link {
+    text-decoration: none;
+    color: white;
+    text-transform: uppercase;
+    font-family: var(--font-hero);
+    font-weight: 800;
+    /* Use a safer baseline font size that guarantees it won't overflow a 400-500px panel */
+    font-size: min(8vw, 3rem);
+    line-height: 0.85;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 1rem;
+    transform-origin: left center;
+    transition: color 0.3s ease, transform 0.3s ease;
+    white-space: normal;
+    overflow-wrap: break-word;
+    /* Absolute fallback if the word is still too huge */
+    word-break: break-all;
+    /* Break it anywhere to stop crop */
+    padding-right: 2rem;
+    /* Huge safety buffer on the right side */
+    width: 100%;
+    min-width: 0;
+}
+
+.nav-link-number {
+    font-family: var(--font-primary);
+    font-size: clamp(1rem, 2vw, 2rem);
+    font-weight: 400;
+    margin-bottom: clamp(0.5rem, 2vw, 2rem);
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+}
+
+.nav-link:hover {
+    color: #0f0f0f;
+    transform: translateX(20px);
+}
+
+.nav-link:hover .nav-link-number {
+    opacity: 1;
+    color: #0f0f0f;
+}
+
+.nav-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    font-family: var(--font-primary);
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0 2rem;
+}
+
+.nav-footer-text {
+    opacity: 0.5;
+}
+
+.nav-socials {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-socials a {
+    color: white;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+.nav-socials a:hover {
+    opacity: 0.5;
+}
+
+/* Media Query for smaller screens to adjust padding */
+@media (max-width: 768px) {
+    .nav-links-container {
+        padding-left: 0;
+        gap: 2vh;
+    }
+
+    .nav-link {
+        font-size: clamp(1.2rem, 8vw, 2rem);
+        gap: 1rem;
+    }
+
+    .nav-footer {
+        padding: 0;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+}

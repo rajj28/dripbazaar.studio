@@ -1,0 +1,21 @@
+.smoke-particles {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  overflow: visible;
+}
+
+.smoke-particle {
+  position: absolute;
+  bottom: 30%;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(249,115,22,0.08) 60%, rgba(0,0,0,0) 100%);
+  filter: blur(8px);
+  opacity: 0.3;
+  pointer-events: none;
+  mix-blend-mode: lighten;
+}
+

@@ -1,0 +1,7 @@
+node_modules
+.env
+.env.local
+ngrok.exe
+ngrok.zip
+*.md
+!README.md

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyper-Realistic Paper Unfold Animation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            overflow-x: hidden;
+            background: #1a1410;
+        }
+
+        /* Paper container */
+        .paper-container {
+            height: 400vh;
+            position: relative;
+            background: linear-gradient(135deg, #2c2416 0%, #1a1410 100%);
+        }
+
+        .paper-sticky {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Content overlay */
+        .content-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0;
+            animation: fadeIn 1s ease-out 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .title {
+            font-size: 64px;
+            font-weight: 700;
+            color: #3d2f1f;
+            letter-spacing: 12px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #5d4a3a;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="paper-container">
+        <div class="paper-sticky">
+            <canvas id="canvas"></canvas>
+            <div class="content-overlay">
+                <h1 class="title">RIWAAZ</h1>
+                <p class="subtitle">Unfold the Tradition</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        // Register GSAP plugin
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Scene setup
+        const canvas = document.getElementById('canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 15;
+
+        const renderer = new THREE.WebGLRenderer({ 
+            canvas, 
+            antialias: true, 
+            alpha: true,
+            powerPreference: 'high-performance'
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+
+        const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight1.position.set(5, 5, 5);
+        scene.add(directionalLight1);
+
+        const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
+        directionalLight2.position.set(-5, 3, 3);
+        scene.add(directionalLight2);
+
+        const pointLight = new THREE.PointLight(0xffffff, 0.5);
+        pointLight.position.set(0, 0, 5);
+        scene.add(pointLight);
+
+        // Custom shader material for realistic paper
+        const vertexShader = `
+            varying vec2 vUv;
+            varying vec3 vNormal;
+            varying vec3 vPosition;
+            
+            void main() {
+                vUv = uv;
+                vNormal = normalize(normalMatrix * normal);
+                vPosition = position;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+        `;
+
+        const fragmentShader = `
+            uniform float uTime;
+            uniform float uLightIntensity;
+            uniform float uShadowIntensity;
+            uniform vec3 uPaperColor;
+            
+            varying vec2 vUv;
+            varying vec3 vNormal;
+            varying vec3 vPosition;
+            
+            // Noise function for paper fiber texture
+            float random(vec2 st) {
+                return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
+            }
+            
+            float noise(vec2 st) {
+                vec2 i = floor(st);
+                vec2 f = fract(st);
+                float a = random(i);
+                float b = random(i + vec2(1.0, 0.0));
+                float c = random(i + vec2(0.0, 1.0));
+                float d = random(i + vec2(1.0, 1.0));
+                vec2 u = f * f * (3.0 - 2.0 * f);
+                return mix(a, b, u.x) + (c - a)* u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+            }
+            
+            void main() {
+                // Base paper color (off-white/beige)
+                vec3 paperColor = uPaperColor;
+                
+                // Subtle fiber noise texture (animated)
+                float noiseScale = 50.0;
+                float noiseValue = noise(vUv * noiseScale + uTime * 0.05);
+                noiseValue += noise(vUv * noiseScale * 2.0 - uTime * 0.03) * 0.5;
+                paperColor += (noiseValue - 0.5) * 0.02;
+                
+                // Lighting based on normal (simulate light falloff)
+                vec3 lightDir = normalize(vec3(0.5, 0.5, 1.0));
+                float diffuse = max(dot(vNormal, lightDir), 0.0);
+                diffuse = diffuse * 0.6 + 0.4;
+                
+                // Apply dynamic light intensity
+                vec3 litColor = paperColor * diffuse * uLightIntensity;
+                
+                // Add soft shadows
+                float shadow = 1.0 - uShadowIntensity;
+                litColor *= shadow;
+                
+                // Slight ambient occlusion at edges
+                float edgeDarkening = smoothstep(0.0, 0.1, vUv.x) * smoothstep(1.0, 0.9, vUv.x) *
+                                      smoothstep(0.0, 0.1, vUv.y) * smoothstep(1.0, 0.9, vUv.y);
+                litColor *= 0.85 + edgeDarkening * 0.15;
+                
+                // Slight paper thickness effect
+                float thickness = 0.98 + abs(vNormal.z) * 0.02;
+                litColor *= thickness;
+                
+                gl_FragColor = vec4(litColor, 1.0);
+            }
+        `;
+
+        // Create paper segments
+        const totalSegments = 6;
+        const segmentWidth = 4;
+        const segmentHeight = 3;
+        const paperSegments = [];
+
+        for (let i = 0; i < totalSegments; i++) {
+            const geometry = new THREE.PlaneGeometry(segmentWidth, segmentHeight, 32, 32);
+            const material = new THREE.ShaderMaterial({
+                vertexShader,
+                fragmentShader,
+                uniforms: {
+                    uTime: { value: 0 },
+                    uLightIntensity: { value: 1.0 },
+                    uShadowIntensity: { value: 0.0 },
+                    uPaperColor: { value: new THREE.Color(0xf5f5dc) }
+                },
+                side: THREE.DoubleSide
+            });
+
+            const mesh = new THREE.Mesh(geometry, material);
+            
+            // Position segments
+            const yOffset = (totalSegments / 2 - i) * 3;
+            const xOffset = (i % 2 === 0 ? -0.5 : 0.5) * (i * 0.2);
+            mesh.position.set(xOffset, yOffset, 0);
+            
+            scene.add(mesh);
+            paperSegments.push({ mesh, material, index: i });
+        }
+
+        // Scroll progress
+        let scrollProgress = 0;
+
+        // GSAP ScrollTrigger
+        gsap.to({}, {
+            scrollTrigger: {
+                trigger: '.paper-container',
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 1,
+                onUpdate: (self) => {
+                    scrollProgress = self.progress;
+                }
+            }
+        });
+
+        // Animation loop
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const elapsedTime = clock.getElapsedTime();
+            
+            // Update each paper segment
+            paperSegments.forEach(({ mesh, material, index }) => {
+                const segmentProgress = Math.max(0, Math.min(1, (scrollProgress - index * 0.15) / 0.3));
+                
+                // Calculate fold angle (0 to 180 degrees)
+                const foldAngle = segmentProgress * Math.PI;
+                
+                // Apply 3D rotation with diagonal folding
+                if (index % 2 === 0) {
+                    // Even segments fold from top-right to bottom-left
+                    mesh.rotation.z = -foldAngle * 0.5;
+                    mesh.rotation.x = Math.sin(foldAngle) * 0.3;
+                } else {
+                    // Odd segments fold from top-left to bottom-right
+                    mesh.rotation.z = foldAngle * 0.5;
+                    mesh.rotation.x = Math.sin(foldAngle) * 0.3;
+                }
+                
+                // Simulate paper curve (not perfectly flat)
+                const curve = Math.sin(segmentProgress * Math.PI) * 0.2;
+                mesh.rotation.y = curve;
+                
+                // Dynamic lighting based on rotation angle
+                const lightIntensity = 0.7 + Math.cos(foldAngle) * 0.3;
+                material.uniforms.uLightIntensity.value = lightIntensity;
+                
+                // Shadow intensity increases with fold angle
+                const shadowIntensity = Math.sin(foldAngle * 0.5) * 0.6;
+                material.uniforms.uShadowIntensity.value = shadowIntensity;
+                
+                // Animated fiber noise
+                material.uniforms.uTime.value = elapsedTime;
+            });
+            
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        });
+    </script>
+</body>
+</html>

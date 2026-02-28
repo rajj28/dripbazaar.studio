@@ -1,0 +1,82 @@
+.paper-unfold-frames-container {
+    height: 400vh;
+    position: relative;
+    background: linear-gradient(135deg, #2c2416 0%, #1a1410 100%);
+}
+
+.paper-unfold-frames-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.paper-unfold-frames-sticky canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.paper-content-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 10;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+}
+
+.paper-frame-title {
+    font-size: 72px;
+    font-weight: 700;
+    color: #3d2f1f;
+    letter-spacing: 16px;
+    text-transform: uppercase;
+    text-shadow: 
+        2px 2px 4px rgba(0, 0, 0, 0.2),
+        -1px -1px 2px rgba(255, 255, 255, 0.3);
+    margin: 0 0 15px 0;
+    font-family: Georgia, serif;
+}
+
+.paper-frame-subtitle {
+    font-size: 20px;
+    color: #5d4a3a;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin: 0;
+}
+
+@media (max-width: 1200px) {
+    .paper-frame-title {
+        font-size: 56px;
+        letter-spacing: 12px;
+    }
+    
+    .paper-frame-subtitle {
+        font-size: 18px;
+        letter-spacing: 4px;
+    }
+}
+
+@media (max-width: 768px) {
+    .paper-unfold-frames-container {
+        height: 300vh;
+    }
+    
+    .paper-frame-title {
+        font-size: 42px;
+        letter-spacing: 8px;
+    }
+    
+    .paper-frame-subtitle {
+        font-size: 16px;
+        letter-spacing: 3px;
+    }
+}

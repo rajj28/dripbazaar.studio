@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Frame Extractor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .video-info {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .video-info p {
+            margin: 5px 0;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .progress {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .progress.active {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .preview {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .preview.active {
+            display: block;
+        }
+
+        .preview canvas {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        video {
+            display: none;
+        }
+
+        .note {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Video Frame Extractor</h1>
+        <p class="subtitle">Extract frames from your video and download as images</p>
+
+        <div class="video-info" id="videoInfo">
+            <p><strong>Video:</strong> Firefly Paper Video</p>
+            <p><strong>Duration:</strong> <span id="duration">Loading...</span></p>
+            <p><strong>Resolution:</strong> <span id="resolution">Loading...</span></p>
+        </div>
+
+        <div class="controls">
+            <label for="fps">Frames Per Second (FPS):</label>
+            <input type="number" id="fps" value="30" min="1" max="60" />
+        </div>
+
+        <button id="extractBtn" onclick="startExtraction()">
+            🎞️ Extract Frames
+        </button>
+
+        <div class="progress" id="progress">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill">0%</div>
+            </div>
+            <p class="progress-text" id="progressText">Extracting frames...</p>
+        </div>
+
+        <div class="preview" id="preview">
+            <canvas id="canvas"></canvas>
+        </div>
+
+        <div class="note">
+            <strong>Note:</strong> Frames will be downloaded as individual JPG images. 
+            You can then place them in the <code>public/frames/</code> folder.
+        </div>
+    </div>
+
+    <video id="video" preload="metadata" muted>
+        <source src="Firefly A static camera in a 16-9 aspect ratio captures a macro close-up of a thick warm beige parch.mp4" type="video/mp4">
+    </video>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const extractBtn = document.getElementById('extractBtn');
+        const progress = document.getElementById('progress');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const preview = document.getElementById('preview');
+        const fpsInput = document.getElementById('fps');
+
+        // Load video info
+        video.addEventListener('loadedmetadata', () => {
+            document.getElementById('duration').textContent = `${video.duration.toFixed(2)}s`;
+            document.getElementById('resolution').textContent = `${video.videoWidth}x${video.videoHeight}`;
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+        });
+
+        async function startExtraction() {
+            const fps = parseInt(fpsInput.value);
+            const duration = video.duration;
+            const frameCount = Math.floor(duration * fps);
+            const frameInterval = 1 / fps;
+
+            extractBtn.disabled = true;
+            progress.classList.add('active');
+            preview.classList.add('active');
+
+            const zip = new JSZip();
+            const framesFolder = zip.folder('frames');
+
+            console.log(`Extracting ${frameCount} frames at ${fps} FPS`);
+
+            for (let i = 0; i < frameCount; i++) {
+                const time = i * frameInterval;
+                
+                // Seek to specific time
+                video.currentTime = time;
+                
+                // Wait for seek to complete
+                await new Promise((resolve) => {
+                    video.addEventListener('seeked', resolve, { once: true });
+                });
+
+                // Draw frame to canvas
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                // Convert canvas to blob
+                const blob = await new Promise((resolve) => {
+                    canvas.toBlob(resolve, 'image/jpeg', 0.95);
+                });
+
+                // Add to zip with padded filename
+                const frameNumber = String(i + 1).padStart(4, '0');
+                framesFolder.file(`frame_${frameNumber}.jpg`, blob);
+
+                // Update progress
+                const percent = Math.round(((i + 1) / frameCount) * 100);
+                progressFill.style.width = `${percent}%`;
+                progressFill.textContent = `${percent}%`;
+                progressText.textContent = `Extracted ${i + 1} / ${frameCount} frames`;
+            }
+
+            // Generate and download zip
+            progressText.textContent = 'Creating ZIP file...';
+            
+            const zipBlob = await zip.generateAsync({ 
+                type: 'blob',
+                compression: 'DEFLATE',
+                compressionOptions: { level: 6 }
+            });
+
+            // Download zip
+            saveAs(zipBlob, 'video-frames.zip');
+
+            progressText.textContent = `✅ Complete! Downloaded ${frameCount} frames as ZIP`;
+            extractBtn.disabled = false;
+            
+            console.log('Extraction complete!');
+        }
+    </script>
+</body>
+</html>

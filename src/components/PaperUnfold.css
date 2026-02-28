@@ -1,0 +1,97 @@
+/* Paper Unfold Container */
+.paper-unfold-container {
+    height: 400vh;
+    position: relative;
+    background: linear-gradient(135deg, #2c2416 0%, #1a1410 100%);
+}
+
+.paper-unfold-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Canvas styling */
+.paper-unfold-sticky canvas {
+    width: 100% !important;
+    height: 100% !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Content overlay */
+.paper-content {
+    position: absolute;
+    text-align: center;
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0;
+    animation: fadeInContent 1s ease-out 0.5s forwards;
+}
+
+@keyframes fadeInContent {
+    to {
+        opacity: 1;
+    }
+}
+
+.paper-title {
+    font-size: 64px;
+    font-weight: 700;
+    color: #3d2f1f;
+    margin: 0 0 15px 0;
+    letter-spacing: 12px;
+    text-transform: uppercase;
+    text-shadow: 
+        2px 2px 4px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(255, 215, 0, 0.2);
+    font-family: 'Cinzel', serif;
+}
+
+.paper-subtitle {
+    font-size: 18px;
+    color: #5d4a3a;
+    margin: 0;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+/* Performance optimizations */
+.paper-unfold-container * {
+    will-change: transform;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .paper-title {
+        font-size: 48px;
+        letter-spacing: 8px;
+    }
+    
+    .paper-subtitle {
+        font-size: 16px;
+        letter-spacing: 3px;
+    }
+}
+
+@media (max-width: 768px) {
+    .paper-unfold-container {
+        height: 300vh;
+    }
+    
+    .paper-title {
+        font-size: 36px;
+        letter-spacing: 6px;
+    }
+    
+    .paper-subtitle {
+        font-size: 14px;
+        letter-spacing: 2px;
+    }
+}
