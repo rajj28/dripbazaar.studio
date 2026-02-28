@@ -42,8 +42,13 @@ export default function AdminDashboard() {
         return;
       }
 
+      console.log('🔍 Admin Check - User:', user.email);
+      console.log('🔍 Admin Check - Profile:', profile);
+      console.log('🔍 Admin Check - Profile Role:', profile?.role);
+
       // Check if user has admin role in profile
       if (profile?.role === 'admin') {
+        console.log('✅ Admin access granted via profile role');
         setIsAdmin(true);
         setCheckingAdmin(false);
         return;
@@ -52,16 +57,21 @@ export default function AdminDashboard() {
       // If no role in profile, check email (you can add your admin emails here)
       const adminEmails = [
         'admin@dripbazaar.studio',
-        'your-email@example.com', // Add your admin email here
+        'dripbazaar.studio@gmail.com', // Admin email
       ];
 
+      console.log('🔍 Checking email whitelist:', adminEmails);
+      console.log('🔍 User email:', user.email);
+
       if (adminEmails.includes(user.email || '')) {
+        console.log('✅ Admin access granted via email whitelist');
         setIsAdmin(true);
         setCheckingAdmin(false);
         return;
       }
 
       // Not an admin
+      console.log('❌ Admin access denied');
       setIsAdmin(false);
       setCheckingAdmin(false);
       alert('Access denied. Admin privileges required.');
