@@ -14,7 +14,7 @@ html, body {
   width: 100%;
   position: relative;
   -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
+  touch-action: auto;
   text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
 }
@@ -23,6 +23,13 @@ html, body {
 * {
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
+}
+
+/* Allow vertical scrolling on mobile */
+@media (max-width: 768px) {
+  * {
+    touch-action: pan-y pan-x !important;
+  }
 }
 
 /* Smooth scrolling with better mobile support */

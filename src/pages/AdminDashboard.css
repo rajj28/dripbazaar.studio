@@ -426,11 +426,16 @@
     position: relative !important;
   }
 
+  #root {
+    height: auto !important;
+    min-height: auto !important;
+  }
+
   .admin-dashboard {
     padding: 1rem;
     padding-top: 80px; /* Space for profile icon */
     padding-bottom: 2rem;
-    height: auto;
+    height: auto !important;
     min-height: 100vh;
     position: relative;
     overflow: visible;
