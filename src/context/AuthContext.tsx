@@ -83,13 +83,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (error) return { error };
 
-      // Create profile
+      // Fallback: Create profile if trigger didn't work
       if (data.user) {
-        await supabase.from('profiles').insert({
-          id: data.user.id,
-          email: data.user.email!,
-          full_name: fullName,
-        });
+        // Wait a bit for trigger to execute
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Check if profile exists
+        const { data: existingProfile } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('id', data.user.id)
+          .single();
+
+        // If profile doesn't exist, create it manually
+        if (!existingProfile) {
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert({
+              id: data.user.id,
+              email: data.user.email!,
+              full_name: fullName,
+            });
+
+          if (profileError) {
+            console.error('Error creating profile:', profileError);
+          }
+        }
       }
 
       return { error: null };

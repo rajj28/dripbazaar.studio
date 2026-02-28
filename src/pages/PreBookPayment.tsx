@@ -72,15 +72,24 @@ export default function PreBookPayment() {
       const fileExt = paymentProof.name.split('.').pop();
       const fileName = `${user.id}/${orderId}.${fileExt}`;
       
+      console.log('Uploading file:', fileName);
+      console.log('User ID:', user.id);
+      console.log('Order ID:', orderId);
+      
       setUploadProgress(30);
       
-      const { error: uploadError } = await supabase.storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from('payment-proofs')
         .upload(fileName, paymentProof, {
           upsert: true
         });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw uploadError;
+      }
+      
+      console.log('Upload successful:', uploadData);
 
       setUploadProgress(60);
 
@@ -89,10 +98,12 @@ export default function PreBookPayment() {
         .from('payment-proofs')
         .getPublicUrl(fileName);
 
+      console.log('Public URL:', publicUrl);
+      
       setUploadProgress(80);
 
       // Create payment record
-      const { error: paymentError } = await supabase
+      const { data: paymentData, error: paymentError } = await supabase
         .from('payments')
         .insert({
           order_id: orderId,
@@ -102,15 +113,29 @@ export default function PreBookPayment() {
           payment_method: 'UPI',
           payment_screenshot_url: publicUrl,
           status: 'pending'
-        });
+        })
+        .select()
+        .single();
 
-      if (paymentError) throw paymentError;
+      if (paymentError) {
+        console.error('Payment insert error:', paymentError);
+        throw paymentError;
+      }
+      
+      console.log('Payment record created:', paymentData);
 
       // Update order status
-      await supabase
+      const { error: orderError } = await supabase
         .from('orders')
         .update({ status: 'payment_submitted' })
         .eq('id', orderId);
+        
+      if (orderError) {
+        console.error('Order update error:', orderError);
+        throw orderError;
+      }
+      
+      console.log('Order status updated');
 
       setUploadProgress(100);
 

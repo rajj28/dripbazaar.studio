@@ -13,6 +13,7 @@ const Cart = lazy(() => import('./pages/Cart'));
 const Checkout = lazy(() => import('./pages/Checkout'));
 const Payment = lazy(() => import('./pages/Payment'));
 const OrderSuccess = lazy(() => import('./pages/OrderSuccess'));
+const Profile = lazy(() => import('./pages/Profile'));
 
 // Loading fallback component
 function PageLoader() {
@@ -47,6 +48,7 @@ export default function AppRouter() {
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/payment" element={<Payment />} />
             <Route path="/order-success" element={<OrderSuccess />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </Suspense>
       </CartProvider>

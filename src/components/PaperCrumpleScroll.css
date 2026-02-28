@@ -467,53 +467,166 @@
 }
 
 @media (max-width: 768px) {
+    /* Reduce scroll height for mobile */
+    .paper-crumple-scroll-container {
+        height: 300vh !important; /* Reduced from 600vh for faster scrolling */
+        position: relative !important;
+    }
+    
+    /* Keep sticky behavior but adjust to show content */
+    .paper-crumple-scroll-sticky {
+        position: sticky !important;
+        top: -10vh !important; /* Shift up slightly to show more content */
+        height: 110vh !important; /* Increase height to accommodate */
+        overflow: visible !important; /* Don't clip content */
+    }
+    
+    /* Show canvas but optimize for mobile */
+    .paper-crumple-canvas {
+        display: block !important;
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+    }
+    
+    /* Position content as overlay - adjusted positioning */
+    .crumple-content-overlay {
+        position: absolute !important;
+        top: 55% !important; /* Move down to show heading */
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        opacity: 1 !important;
+        width: 100% !important;
+        height: auto !important;
+        max-height: 95vh !important;
+        display: flex !important;
+        align-items: flex-start !important;
+        justify-content: center !important;
+        z-index: 10 !important;
+        padding-top: 10vh !important; /* Add top padding */
+    }
+
     .premium-content-wrapper {
-        padding: 40px 30px;
+        padding: 30px 20px !important;
+        background: rgba(0, 0, 0, 0.7) !important;
+        backdrop-filter: blur(5px) !important;
+        width: 90% !important;
+        max-width: 500px !important;
+        height: auto !important;
+        max-height: 80vh !important;
+        overflow-y: auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5) !important;
+        scrollbar-width: thin !important;
+        scrollbar-color: rgba(255, 215, 0, 0.3) transparent !important;
+    }
+    
+    /* Webkit scrollbar styling */
+    .premium-content-wrapper::-webkit-scrollbar {
+        width: 4px;
+    }
+    
+    .premium-content-wrapper::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    .premium-content-wrapper::-webkit-scrollbar-thumb {
+        background: rgba(255, 215, 0, 0.3);
+        border-radius: 2px;
     }
 
     .premium-label {
-        font-size: 9px;
-        letter-spacing: 3px;
-        margin-bottom: 15px;
+        font-size: 8px;
+        letter-spacing: 2px;
+        margin-bottom: 10px;
     }
 
     .premium-title {
-        font-size: 42px;
-        letter-spacing: 6px;
-        margin-bottom: 20px;
+        font-size: 22px !important;
+        letter-spacing: 2px !important;
+        margin-bottom: 12px;
+        white-space: nowrap !important;
+        line-height: 1.2 !important;
     }
 
     .premium-description {
-        font-size: 13px;
-        line-height: 1.6;
-        margin-bottom: 35px;
+        font-size: 11px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+        max-width: 100% !important;
+        text-align: center;
     }
 
     .premium-product-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-        margin-bottom: 35px;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+        margin-bottom: 20px;
+        width: 100%;
+    }
+    
+    .premium-card {
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    
+    .premium-card-image {
+        width: 100%;
+        aspect-ratio: 3/4;
     }
 
     .premium-card-info {
-        padding: 15px;
+        padding: 10px;
     }
 
     .premium-card-name {
-        font-size: 10px;
-        letter-spacing: 1.5px;
+        font-size: 8px;
+        letter-spacing: 1px;
     }
 
     .premium-card-price {
-        font-size: 11px;
+        font-size: 9px;
     }
 
     .premium-cta {
-        padding: 16px 35px;
-        font-size: 10px;
-        letter-spacing: 2.5px;
+        padding: 12px 25px;
+        font-size: 9px;
+        letter-spacing: 2px;
         width: 100%;
         justify-content: center;
+        gap: 10px;
+    }
+    
+    /* Optimize loading overlay for mobile */
+    .crumple-loading-overlay {
+        padding: 20px;
+    }
+    
+    .crumple-loading-spinner {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 20px;
+    }
+    
+    .crumple-loading-text {
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+    
+    .crumple-progress-bar {
+        width: 250px;
+        height: 35px;
+    }
+    
+    .crumple-progress-fill {
+        font-size: 14px;
+    }
+    
+    .crumple-loading-subtext {
+        font-size: 12px;
     }
 }
 
@@ -530,6 +643,7 @@
     margin: 0 0 20px 0;
     font-family: Georgia, serif;
     mix-blend-mode: screen;
+    white-space: nowrap;
 }
 
 .crumple-main-subtitle {

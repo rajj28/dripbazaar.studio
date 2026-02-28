@@ -11,7 +11,10 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: true
+    detectSessionInUrl: true,
+    storage: window.localStorage,
+    storageKey: 'drip-riwaaz-auth',
+    flowType: 'pkce'
   }
 });
 
@@ -27,20 +30,26 @@ export interface Profile {
 
 export interface Order {
   id: string;
-  user_id: string;
-  drop_name: string;
-  drop_id: number;
-  full_name: string;
-  phone: string;
-  address: string;
-  city: string;
-  state: string;
-  pincode: string;
-  size: string;
-  price: number;
+  user_id?: string;
+  items: any[]; // CartItem[] - storing cart items as JSONB
+  total_amount: number;
+  address: any; // Address object stored as JSONB
   status: 'pending' | 'payment_submitted' | 'payment_verified' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
+  payment_method?: string;
+  razorpay_order_id?: string;
+  razorpay_payment_id?: string;
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
+  // Legacy fields for pre-book orders
+  drop_name?: string;
+  drop_id?: number;
+  full_name?: string;
+  phone?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  size?: string;
+  price?: number;
 }
 
 export interface Payment {

@@ -183,15 +183,19 @@
   .payment-container {
     padding: 32px;
   }
+
+  .payment-method-options {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .payment-page {
-    padding: 90px 3% 50px;
+    padding: 100px 4% 60px;
   }
 
   .payment-container {
-    padding: 20px;
+    padding: 24px;
   }
 
   .payment-container h1 {
@@ -201,6 +205,13 @@
 
   .payment-method {
     padding: 20px;
+  }
+
+  .payment-method-header {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
   }
 
   .payment-method-header h3 {
@@ -221,6 +232,10 @@
     padding: 20px;
   }
 
+  .payment-summary h2 {
+    font-size: 0.9rem;
+  }
+
   .payment-total {
     font-size: 2rem;
   }
@@ -232,5 +247,89 @@
 
   .payment-secure {
     font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-page {
+    padding: 90px 3% 50px;
+  }
+
+  .payment-container {
+    padding: 20px;
+  }
+
+  .payment-container h1 {
+    font-size: 1.75rem;
+    margin-bottom: 20px;
+  }
+
+  .payment-method {
+    padding: 16px;
+  }
+
+  .payment-method-header {
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .payment-method-header h3 {
+    font-size: 1rem;
+  }
+
+  .payment-method-radio {
+    width: 20px;
+    height: 20px;
+  }
+
+  .payment-method-radio-dot {
+    width: 10px;
+    height: 10px;
+  }
+
+  .payment-method-options {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding-left: 30px;
+  }
+
+  .payment-option {
+    font-size: 0.8rem;
+    gap: 6px;
+  }
+
+  .payment-option svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .payment-summary {
+    padding: 18px;
+    margin-bottom: 20px;
+  }
+
+  .payment-summary h2 {
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+  }
+
+  .payment-total {
+    font-size: 1.75rem;
+  }
+
+  .payment-submit-btn {
+    padding: 14px;
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+  }
+
+  .payment-secure {
+    font-size: 0.8rem;
+    gap: 6px;
+  }
+
+  .payment-secure svg {
+    width: 18px;
+    height: 18px;
   }
 }

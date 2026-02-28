@@ -58,6 +58,7 @@ body {
     height: auto;
     min-height: 100vh;
     background-attachment: scroll;
+    background-image: url('/drip bazaar all assests/mobile hero background.png');
   }
 }
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import './Payment.css';
 
@@ -14,6 +15,7 @@ export default function Payment() {
   const location = useLocation();
   const navigate = useNavigate();
   const { cart, clearCart } = useCart();
+  const { user } = useAuth();
   const { address, total } = location.state || {};
 
   const [loading, setLoading] = useState(false);
@@ -40,10 +42,12 @@ export default function Payment() {
       const { data, error } = await supabase
         .from('orders')
         .insert({
+          user_id: user?.id,
           items: cart,
           total_amount: total,
-          address: address,
-          payment_status: 'pending'
+          address: address, // Store the full address object as JSONB
+          status: 'pending',
+          payment_method: 'razorpay'
         })
         .select()
         .single();
@@ -79,12 +83,29 @@ export default function Payment() {
         order_id: order.id,
         handler: async function (response: any) {
           try {
+            // Create payment record
+            const { error: paymentError } = await supabase
+              .from('payments')
+              .insert({
+                order_id: order.id,
+                user_id: user?.id,
+                amount: total,
+                payment_method: 'razorpay',
+                transaction_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+                status: 'pending'
+              })
+              .select()
+              .single();
+
+            if (paymentError) throw paymentError;
+
+            // Update order status to payment_submitted
             await supabase
               .from('orders')
               .update({
-                payment_status: 'completed',
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_order_id: response.razorpay_order_id
+                status: 'payment_submitted'
               })
               .eq('id', order.id);
 
