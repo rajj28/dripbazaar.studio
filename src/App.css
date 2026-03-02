@@ -45,7 +45,7 @@ body {
   will-change: transform;
   transform: translateZ(0);
   backface-visibility: hidden;
-  background-image: url('/drip bazaar all assests/hero3.png');
+  background-image: url('/drip bazaar all assests/Picsart_26-03-02_07-23-32-674.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -59,6 +59,7 @@ body {
     min-height: 100vh;
     background-attachment: scroll;
     background-image: url('/drip bazaar all assests/26c0f3fd-e7c3-48fd-839d-6082d993f677.jpg');
+    background-position: 25% 10%; /* Left (25%) and moved more up (10%) */
   }
 }
 
