@@ -58,7 +58,7 @@ body {
     height: auto;
     min-height: 100vh;
     background-attachment: scroll;
-    background-image: url('/drip bazaar all assests/mobile hero background.png');
+    background-image: url('/drip bazaar all assests/26c0f3fd-e7c3-48fd-839d-6082d993f677.jpg');
   }
 }
 
@@ -132,5 +132,50 @@ video {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+
+/* Mobile Video Reel - Hero Section */
+.hero-mobile-video {
+  display: none;
+}
+
+@media (max-width: 968px) {
+  .hero-mobile-video {
+    display: block;
+    width: 100%;
+    max-width: 400px;
+    margin: 2rem auto 0;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+    border: 2px solid rgba(249, 115, 22, 0.3);
+  }
+
+  .hero-video-reel {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-mobile-video {
+    max-width: 350px;
+    margin: 1.5rem auto 0;
+    border-radius: 16px;
+    border: 2px solid rgba(249, 115, 22, 0.4);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7),
+                0 0 30px rgba(249, 115, 22, 0.2);
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-mobile-video {
+    max-width: 300px;
+    margin: 1rem auto 0;
+    border-radius: 12px;
   }
 }

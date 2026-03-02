@@ -64,6 +64,18 @@ function App() {
             <div>
               <Carousel3D />
             </div>
+            {/* Mobile Video Reel - Only visible on mobile */}
+            <div className="hero-mobile-video">
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="hero-video-reel"
+              >
+                <source src="/drip bazaar all assests/WhatsApp Video 2026-03-03 at 2.26.22 AM.mp4" type="video/mp4" />
+              </video>
+            </div>
             <div className="hero-welcome-text" style={{ marginTop: '2rem', textAlign: 'left', width: '100%', paddingLeft: '0' }}>
               <p className="hero-welcome-subtitle">India's First Verified Thrift Marketplace</p>
             </div>

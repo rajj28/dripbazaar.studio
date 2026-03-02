@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../Downloads/ancient_temple"
+		},
+		{
+			"path": "../Downloads/ancient_arch"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "db",
+		"typescript.autoClosingTags": false
+	}
+}

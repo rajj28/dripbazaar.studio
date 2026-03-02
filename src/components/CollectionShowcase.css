@@ -627,3 +627,54 @@
         height: 130vh !important;
     }
 }
+
+
+/* Sold Out Badge */
+.stage-sold-out-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 10;
+    background: rgba(239, 68, 68, 0.95);
+    color: white;
+    padding: 8px 20px;
+    font-family: var(--font-primary);
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    backdrop-filter: blur(10px);
+    transform: rotate(-3deg);
+    animation: soldOutPulse 2s ease-in-out infinite;
+}
+
+@keyframes soldOutPulse {
+    0%, 100% {
+        transform: rotate(-3deg) scale(1);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    }
+    50% {
+        transform: rotate(-3deg) scale(1.05);
+        box-shadow: 0 6px 16px rgba(239, 68, 68, 0.6);
+    }
+}
+
+@media (max-width: 768px) {
+    .stage-sold-out-badge {
+        top: 12px;
+        right: 12px;
+        padding: 6px 16px;
+        font-size: 0.65rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .stage-sold-out-badge {
+        top: 10px;
+        right: 10px;
+        padding: 5px 14px;
+        font-size: 0.6rem;
+    }
+}

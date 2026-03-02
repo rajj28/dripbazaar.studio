@@ -240,6 +240,12 @@ export default function CollectionShowcase() {
                                 loading="lazy"
                                 decoding="async"
                             />
+                            {/* Sold Out Badge */}
+                            {!chapter.locked && (
+                                <div className="stage-sold-out-badge">
+                                    SOLD OUT
+                                </div>
+                            )}
                             {/* Per-chapter accent glow beneath/around card */}
                             <div
                                 className="stage-card-glow"
@@ -321,10 +327,10 @@ export default function CollectionShowcase() {
                             <button
                                 className="stage-cta"
                                 style={{ borderColor: chapter.accent }}
-                                disabled={chapter.locked}
+                                disabled={true}
                                 onClick={() => handlePreBook(chapter)}
                             >
-                                {chapter.locked ? 'COMING SOON' : 'PRE-BOOK NOW'}
+                                {chapter.locked ? 'COMING SOON' : 'SOLD OUT'}
                             </button>
                         </div>
                     </motion.div>
